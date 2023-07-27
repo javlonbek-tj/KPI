@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <title><%= pageTitle %></title>
+  </head>
+  <body>
+    <div id="wrapper" class="wrapper_login">
+      <section class="signup container login">
+        <% if(errorMessage) { %>
+        <h5 class="text-center text-danger mb-5"><%= errorMessage %></h5>
+        <% } %>
+        <h4 class="text-primary mb-4 text-center">Davlat kadastrlari palatasi</h4>
+        <div class="signup-content text-center">
+          <div class="signup-form">
+            <h6 class="text-secondary mb-5 text-center">
+              Xodimlarni nazorat qilish va samaradorlikning muhim ko'rsatkichlarini(KPI) hisoblash platformasi
+            </h6>
+            <form method="POST" class="register-form fs-6 mt-3" id="register-form" action="/login" novalidate>
+              <div class="form-group mb-3">
+                <label for="login"><i class="fa-solid fa-lock me-3 text-success"></i></label>
+                <input
+                  type="password"
+                  name="login"
+                  id="login"
+                  placeholder="Login"
+                />
+              </div>
+              <div class="form-group mb-3">
+                <label for="password"><i class="fa-solid fa-lock me-3 text-warning"></i></label>
+                <input
+                  type="password"
+                  name="password"
+                  id="password"
+                  placeholder="Parol"
+                />
+              </div>
+              <div class="form-button mt-5">
+                <input type="submit" class="form-submit py-2 px-4 text-primary" value="Kirish" />
+              </div>
+            </form>
+          </div>
+        </div>
+      </section>
+    </div>
+  </body>
+</html>

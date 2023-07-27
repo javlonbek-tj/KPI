@@ -1,0 +1,131 @@
+<%- include('../includes/head.ejs') %>
+<div class="container-fluid px-4">
+  <% if (errorMessage) { %>
+    <h5 class="text-center text-danger mb-5"><%= errorMessage %></h5>
+  <% } %>
+  <section class="filter container-fluid fs-4 d-flex justify-content-center mx-auto">
+    <form class="cart" action="<%= update ? '/admin/updateEmployee' : '/admin/addEmployee' %>" method="POST" enctype="multipart/form-data">
+      <div class="filtering addInfo">
+        <% if (update) { %>
+          <label for="departmentId" class="fs-6">Bo'lim</label>
+        <% } %>
+        <select name="departmentId" id="departmentId">
+          <option <%= (!error || !employee.departmentId) ? 'selected' : '' %> disabled>Bo'lim</option>
+          <% for (let department of departments) { %>
+            <h1><%= department.name%></h1>
+            <option value="<%= department.id %>" <%= (error && employee.departmentId == department.id || update && employee.departmentId == department.id) ? 'selected' : '' %>><%= department.name %></option>
+          <% } %>
+        </select>
+      </div>
+      <div class="filtering addInfo">
+        <% if (update) { %>
+          <label for="firstname" class="fs-6">Ism</label>
+        <% } %>
+        <input
+          type="text"
+          name="firstname"
+          id="firstname"
+          placeholder="Ism"
+          value="<%= (error || update) ? employee.firstname : '' %>"
+        />
+      </div>
+      <div class="filtering addInfo">
+        <% if (update) { %>
+          <label for="secondname" class="fs-6">Familiya</label>
+        <% } %>
+        <input
+          type="text"
+          name="secondname"
+          id="secondname"
+          placeholder="Familiya"
+          value="<%= (error || update) ? employee.secondname : '' %>"
+        />
+      </div>
+      <div class="filtering addInfo">
+        <% if (update) { %>
+          <label for="lastname" class="fs-6">Sharif</label>
+        <% } %>
+        <input
+          type="text"
+          name="lastname"
+          id="lastname"
+          placeholder="Sharif"
+          value="<%= (error || update) ? employee.lastname : '' %>"
+        />
+      </div>
+      <div class="filtering addInfo">
+        <% if (update) { %>
+          <label for="login" class="fs-6">Login</label>
+        <% } %>
+        <input
+        type="text"
+        name="login"
+        id="login"
+        placeholder="Login"
+        value="<%= (error || update) ? employee.login : '' %>"
+      />
+
+      </div>
+      <div class="filtering addInfo">
+        <% if (update) { %>
+          <label for="password" class="fs-6">Parol</label>
+        <% } %>
+        <input
+          type="password"
+          name="password"
+          id="password"
+          placeholder="Parol"
+          value="<%= update ? '*****' : (error ? employee.password : '') %>"
+          <%= update ? 'disabled' : '' %> 
+        />
+      </div>
+      <div class="filtering addInfo">
+        <% if (update) { %>
+          <label for="positionId" class="fs-6">Lavozim</label>
+        <% } %>
+        <select name="positionId" id="positionId">
+          <option <%= (!error || !employee.positionId) ? 'selected' : '' %> disabled>Lavozim</option>
+          <% for (let position of positions) { %>
+            <option value="<%= position.id %>" <%= (error && employee.positionId == position.id || update && employee.positionId == position.id) ? 'selected' : '' %>><%= position.name %></option>
+          <% } %>
+        </select>
+      </div>
+      <div class="filtering addInfo">
+        <% if (update) { %>
+          <label for="role" class="fs-6">Role</label>
+        <% } %>
+        <select name="role" id="role">
+        <option <%= (error || employee.role) ? '' : 'selected' %> disabled>Role</option>
+        <option value="user" <%= (employee.role == 'user') ? 'selected' : '' %>>Xodim</option>
+        <option value="kadr" <%= (employee.role == 'kadr') ? 'selected' : '' %>>Kadr</option>
+        <option value="ijro" <%= (employee.role == 'ijro') ? 'selected' : '' %>>Ijro nazoratchisi</option>
+        <% if(user?.role === 'admin' || user?.role === 'superAdmin') { %>
+        <option value="admin" <%= (employee.role == 'admin') ? 'selected' : '' %>>Admin</option>
+        <% } %>
+        <% if(user?.role === 'superAdmin') { %>
+        <option value="superAdmin" <%= (employee.role == 'superAdmin') ? 'selected' : '' %>>Super Admin</option>
+        <% } %>
+        </select>
+      </div>
+      <div class="form-element text-center">
+        <input type="file" id="userPhoto" accept="image/*" class="d-none" name="userPhoto" />
+        <label for="userPhoto" id="userPhoto-preview">
+          <img src="/image/commentUser.png" alt="" class="img-fluid bg-light" style="width: 70px; height: 70px; cursor: pointer;" value="<%= (update || error) ? employee.photo : '' %>"/>
+        </label>
+        <p class="fs-6">Xodim rasmini yuklang</p>
+      </div>
+      <div class="filtering addInfo">
+     <label for="file-0" id="file-0-preview">
+      <p class="text-success upload-text">Rezyume <i class="fa-solid fa-upload"></i></p>
+     </label>
+      <input type="file" id="file-0" class="d-none" name="resume"/>
+      <p class="text-success upload-text d-none mt-2" id="file-0-uploaded">Yuklandi! <i class="fa-solid fa-file text-warning"></i></p>
+    </div>
+      <div>
+        <input type="hidden" name="employeeId" value="<%= employee.id %>">
+        <button type="submit" class="btn btn-primary"><%= update ? 'Yangilash' : 'Qo\'shish' %></button>
+      </div>
+    </form>
+  </section>
+</div>
+<%- include('../includes/end.ejs') %>

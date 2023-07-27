@@ -1,0 +1,73 @@
+<%- include('./includes/head.ejs') %>
+
+<div class="container-fluid px-4">
+  <div class="row my-2">
+    <div class="col-3">
+      <input
+        type="text"
+        id="latenessFilter"
+        class="form-control mb-3 fixed-header"
+        placeholder="Bo'lim nomi bo'yicha qidirish"
+      />
+    </div>
+  </div>
+  <div class="row">
+    <div class="col">
+      <div class="lateness-list">
+        <table class="table table-bordered table-striped">
+          <thead class="table-white fixed-header">
+            <tr>
+              <th class="align-middle text-center">Tartib raqami</th>
+              <th class="align-middle text-center">Bo'lim nomi</th>
+              <th class="align-middle text-center">Xodim</th>
+              <th class="align-middle text-center">Kechikish sanasi</th>
+              <th class="align-middle text-center">Kechikish vaqti</th>
+              <th class="align-middle text-center">Tushuntirish xati</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% latenesses.forEach((late, index) => { 
+              const formatedDate = formatDate(late.lateDay);
+            %>
+            <tr>
+              <td class="align-middle text-center"><%= (index + 1) %></td>
+              <td class="align-middle text-center"><%= late.user.department.name %></td>
+              <td class="align-middle text-center"><%= late.user.firstname %> <%= late.user.secondname %></td>
+              <td class="align-middle text-center"><%= formatedDate %></td>
+              <td class="align-middle text-center"><%= late.lateTime %> minut</td>
+              <td class="align-middle text-center">
+                <a href="/<%= late.explanationLetter %>">Ko'rish</a>
+              </td>
+            </tr>
+            <% if (index !== latenesses.length - 1) { %>
+              <tr>
+                <td colspan="6">
+                  <hr /> <!-- Add a horizontal line after each lateness entry except the last one -->
+                </td>
+              </tr>
+            <% } %>
+            <% }); %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('./includes/end.ejs') %>
+
+<script>
+  document.getElementById('latenessFilter').addEventListener('keyup', function () {
+    const input = this.value.toLowerCase();
+    const rows = document.querySelectorAll('.lateness-list tbody tr');
+    rows.forEach(row => {
+      const departmentName = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
+      if (departmentName.includes(input)) {
+        row.style.display = 'table-row';
+      } else {
+        row.style.display = 'none';
+      }
+    });
+  });
+</script>
+

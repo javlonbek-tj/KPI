@@ -1,0 +1,235 @@
+ <%- include('./includes/head.ejs') %>
+            <div class="container-fluid px-4">
+                <div class="row g-3 my-2 main-stats mb-5">
+                    <div class="col-md stats-item">
+                       <% const isAdminOrKadr = ['admin', 'superAdmin', 'kadr'].includes(user?.role); %>
+                      <% if (isAdminOrKadr) { %>
+                      <a href="/departments">
+                        <% } %>
+                        <div class="p-3 h-100 bg-white shadow-sm d-flex justify-content-around align-items-center rounded">
+                            <div class="stats text-secondary">
+                                <h3><%= departments.length%></h3>
+                                <p class="fw-bold">Bo'limlar</p>
+                            </div>
+                            <i class="fas fa-solid fa-building-user fs-5 primary-text border rounded-full secondary-bg p-3"></i>
+                        </div>
+                        <% if (isAdminOrKadr) { %>
+                        </a>
+                      <% } %>
+                        
+                    </div>
+
+                    <div class="col-md stats-item">
+                       <% let overallEmployees = 0; %>
+                  <% for (let department of departments) { %>
+                    <% overallEmployees += department.numberOfEmployees %>
+                  <% } %>
+                      <div class="p-3 h-100 bg-white shadow-sm d-flex justify-content-around align-items-center rounded">
+                            <div class="stats text-secondary">
+                                <h3><%= overallEmployees%></h3>
+                                <p class="fw-bold">Xodimlar soni</p>
+                            </div>
+                            <i class="fas fa-solid fa-users fs-5 primary-text border rounded-full secondary-bg p-3"></i>
+                        </div></a>
+                        
+                    </div>
+
+                    <div class="col-md stats-item">
+                  <% let overallVacancies = 0; %>
+                  <% for (let department of departments) { %>
+                    <% overallVacancies += department.vacancy; %>
+                  <% } %>
+                  <% if (isAdminOrKadr) { %>
+                    <a href="/departments">
+                  <% } %>
+                  <div class="p-3 h-100 bg-white shadow-sm d-flex justify-content-around align-items-center rounded">
+                    <div class="stats text-secondary">
+                      <h3><%= overallVacancies %></h3>
+                      <p class="fw-bold">Vakansiyalar</p>
+                    </div>
+                    <i class="fa-solid fa-briefcase fs-5 primary-text border rounded-full secondary-bg p-3"></i>
+                  </div>
+                  <% if (isAdminOrKadr) { %>
+                    </a>
+                  <% } %>
+                </div>
+
+
+                    <div class="col-md stats-item">
+                  <% let overallExpiredTasks = 0; %>
+                  <% let currentMonth = 'Joriy'; %>
+                  <% for (let employee of allEmployees) { %>
+                    <% if (employee.dates && employee.dates.length > 0) { %>
+                      <% currentMonth = (employee.dates[employee.dates.length - 1]?.date).split(' ')[3]; %>
+                    <% } %>
+                    <% overallExpiredTasks += employee.expiredTasks.length; %>
+                  <% } %>
+                  <% const isAdminOrIjro = ['admin', 'superAdmin', 'ijro'].includes(user?.role); %>
+                  <% if (isAdminOrIjro) { %>
+                    <a href="/expiredTasks">
+                  <% } %>
+                  <div class="p-3 h-100 bg-white shadow-sm d-flex justify-content-around align-items-center rounded">
+                    <div class="stats text-secondary">
+                      <h3><%= overallExpiredTasks %></h3>
+                      <p class="fw-bold"><%= currentMonth %> oyi muddat buzilishlar</p>
+                    </div>
+                    <i class="fa-solid fa-envelope fs-5 primary-text border rounded-full secondary-bg p-3"></i>
+                  </div>
+                  <% if (isAdminOrIjro) { %>
+                    </a>
+                  <% } %>
+                </div>
+
+
+                    <div class="col-md stats-item">
+                    <% let overallLatenesses = 0; %>
+                    <% for (let employee of allEmployees) { %>
+                      <% overallLatenesses += employee.latenesses.length; %>
+                    <% } %>
+                    <% if (isAdminOrKadr) { %>
+                      <a href="/latenesses">
+                    <% } %> 
+                    <div class="p-3 h-100 bg-white shadow-sm d-flex justify-content-around align-items-center rounded">
+                      <div class="stats text-secondary">
+                        <h3><%= overallLatenesses %></h3>
+                        <p class="fw-bold"><%= currentMonth %> oy kechikishlar</p>
+                      </div>
+                      <i class="fa-solid fa-clock fs-5 primary-text border rounded-full secondary-bg p-3"></i>
+                    </div>
+                    <% if (isAdminOrKadr) { %>
+                      </a>
+                    <% } %>
+                  </div>
+
+                </div>
+
+            <section class="filter container-fluid fs-4 d-flex justify-content-center mx-auto">
+            <form class="filter_items" action="/" method="GET">
+              <div class="filtering">
+                <select name="departmentId" id="departmentId" onchange="updateUsers()">
+                <option selected disabled>Bo'lim</option>
+                <% for (let department of departments) { %>
+               <option value="<%= department.id %>"><%= department.name %></option>
+              <% } %>
+
+
+                </select>
+              </div>
+              <div class="filtering">
+                <select name="fullname" id="fullname">
+                  <option selected disabled>Bo'limni tanlang</option>>
+                </select>
+              </div>
+              <div class="filtering">
+                                <input
+  placeholder="...sanadan"
+  class="textbox-n"
+  name = "from"
+  type="text"
+  onfocus="(this.type='date')"
+  id="date" />
+              </div>
+              <div class="filtering">
+                                                <input
+  placeholder="...sanagacha"
+  class="textbox-n"
+  name = "to"
+  type="text"
+  onfocus="(this.type='date')"
+  id="date" />
+              </div>
+              <div class="filtering">
+                <input type="text" placeholder="Ism Familiyasi" name="search" />
+              </div>
+              <div class="filtering d-flex">
+                <button type="submit" class="ps-2">Qidirish</button>
+                <a href="/admin/excel">Excel</a>
+              </div>
+            </form>
+          </section>
+
+                <div class="row my-2">
+                    <div class="attendance-list">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th class="align-middle text-center">Bo'lim nomi</th>
+                  <th class="align-middle text-center">Xodim F.I.SH</th>
+                  <th class="align-middle text-center">Lavozimi</th>
+                  <th class="align-middle text-center">Oy</th>
+                  <th class="align-middle text-center">Kechikishlar soni</th>
+                  <th class="align-middle text-center">Muddati o'tgan xatlar</th>
+                  <th class="align-middle text-center">Batafsil</th>
+                   <% if(user?.role === 'admin' || user?.role === 'superAdmin' || user?.role === 'kadr') { %>
+                  <th class="align-middle text-center">Kechikish</th>
+                   <% } %>
+                    <% if(user?.role === 'admin' || user?.role === 'superAdmin' || user?.role === 'ijro') { %>
+                  <th class="align-middle text-center">Ijro intizomi</th>
+                  <% } %>
+                  <th class="align-middle text-center">Jazo</th>
+                  <th class="align-middle text-center"></th>
+                </tr>
+              </thead>
+              <tbody>
+     <% for (let employee of employees) { %>
+  <tr class="align-middle">
+    <td class="text-center"><%= employee.department.name %></td>
+    <td class="text-center"><%= employee.secondname %> <%= employee.firstname %></td>
+    <td class="text-center"><%= employee.position.name %></td>
+    <td class="text-center"><%= employee.dates[employee.dates.length - 1]?.date %></td>
+    <td class="text-center <%= ((employee.id !== user.id && user.role === 'user') || (user.role === 'ijro' && employee.id !== user.id)) ? 'blur-effect' : '' %>"><%= employee.latenesses.length %></td>
+    <td class="text-center <%= ((employee.id !== user.id && user.role === 'user') || (user.role === 'kadr' && employee.id !== user.id)) ? 'blur-effect' : '' %>"><%= employee.expiredTasks.length %></td>
+    <td class="text-center"><a href="/admin/users/<%= employee.id %>" class="detail <%= (employee.id !== user.id && user.role === 'user') ? 'disabled' : '' %>">Ko'rish</a></td>
+     <% if(user?.role === 'admin' || user?.role === 'superAdmin' || user?.role === 'kadr') { %>
+    <td class="text-center"><a href="/admin/lateness/<%= employee.id %>" class="late">Kechikish</a></td>
+    <% } %>
+     <% if(user?.role === 'admin' || user?.role === 'superAdmin' || user?.role === 'ijro') { %>
+    <td class="text-center"><a href="/admin/letterControl/<%= employee.id %>" class="letterControl">Ijro</a></td>
+    <% } %>
+    <td class="text-center">
+  <%= employee.punishment !== null ? employee.punishment + '%' : '-' %>
+</td>
+    <td class="text-center">
+  <img src="<%= employee.photo ? employee.photo : '/image/commentUser.png' %>" alt="" class="img-fluid bg-light rounded-full userImg">
+</td>
+
+  </tr>
+<% } %>
+
+
+              </tbody>
+            </table>
+          </div>
+                </div>
+                <% if (isOverLimit) { %>
+  <div class="pagination my-3">
+    <div>
+      <p>Jami <%= total %> ta xodimdan <%= limit %> tasi jadvalda aks etmoqda</p>
+    </div>
+    <div>
+      <a href="?page=<%= previousPage %>&departmentId=<%= query.departmentId %>&positionId=<%= query.positionId %>&from=<%= query.from %>&to=<%= query.to %>" class="blocks <%= (currentPage === 1) ? 'disabled' : '' %>"
+        >&laquo;</a>
+      <% if (currentPage !== 1 && previousPage !== 1) { %>
+        <a href="?page=1&departmentId=<%= query.departmentId %>&positionId=<%= query.positionId %>&from=<%= query.from %>&to=<%= query.to %>" class="blocks">1</a>
+      <% } %>
+      <% if (hasPreviousPage) { %>
+        <a href="?page=<%= previousPage %>&departmentId=<%= query.departmentId %>&positionId=<%= query.positionId %>&from=<%= query.from %>&to=<%= query.to %>" class="blocks"><%= previousPage %></a>
+      <% } %>
+      <a href="?page=<%= currentPage %>&departmentId=<%= query.departmentId %>&positionId=<%= query.positionId %>&from=<%= query.from %>&to=<%= query.to %>" class="active blocks"><%= currentPage %></a>
+      <% if (hasNextPage) { %>
+        <a href="?page=<%= nextPage %>&departmentId=<%= query.departmentId %>&positionId=<%= query.positionId %>&from=<%= query.from %>&to=<%= query.to %>" class="blocks"><%= nextPage %></a>
+      <% } %>
+      <% if (lastPage !== currentPage && nextPage !== lastPage) { %>
+        <a href="?page=<%= lastPage %>&departmentId=<%= query.departmentId %>&positionId=<%= query.positionId %>&from=<%= query.from %>&to=<%= query.to %>" class="blocks"><%= lastPage %></a>
+      <% } %>
+      <a href="?page=<%= nextPage %>&departmentId=<%= query.departmentId %>&positionId=<%= query.positionId %>&from=<%= query.from %>&to=<%= query.to %>" class="blocks <%= (currentPage === lastPage) ? 'disabled' : '' %>"
+        >&raquo;</a>
+    </div>
+  </div>
+<% } %>
+
+            </div>
+        </div>
+    </div>
+ <%- include('./includes/end.ejs') %>
+  

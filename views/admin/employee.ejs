@@ -1,0 +1,159 @@
+<%- include('../includes/head.ejs') %>
+<div class="container-fluid px-4">
+  <div class="row my-2">
+    <div class="user-info">
+      <div class="d-flex align-items-center mb-3">
+        <div class="user-photo me-3">
+          <img
+            src="<%= employee.photo ? `/${employee.photo}` : '/image/commentUser.png' %>"
+            alt="User Photo"
+            class="img-fluid"
+            style="width: 150px; height: 150px; object-fit: cover"
+          />
+        </div>
+        <div>
+          <h3><%= employee.fullname %></h3>
+          <p><strong>Bo'lim:</strong> <%= employee.department.name %></p>
+          <p><strong>Lavozimi:</strong> <%= employee.position.name %></p>
+          <% if(user?.role === 'admin' || user?.role === 'superAdmin' || user?.role === 'kadr') { %>
+           <% if(employee?.role !== 'superAdmin' || user?.role === 'superAdmin') { %> 
+          <a href="/admin/updateEmployee/<%= employee.id%>" class="btn btn-primary me-3">Yangilash</a>
+          <% if (employee.resume) { %>
+           <a href="/<%= employee.resume %>" class="btn btn-success">Rezyume</a>
+           <% } %>
+          <% } %>
+          <% } %>
+        </div>
+      </div>
+      <div class="attendance-list">
+        <table class="table">
+          <thead>
+            <tr>
+              <th class="align-middle text-center">Oy</th>
+              <th class="align-middle text-center">Kechikishlar soni</th>
+              <th class="align-middle text-center">Muddati o'tgan xatlar</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% employee.dates.forEach(date => { const month = getMonth(date.date); const expiredTasks =
+            getExpiredTasks(employee, new Date(date.date).getMonth()); const lateness = getLateness(employee,
+            new Date(date.date).getMonth()); %>
+
+            <tr>
+              <td class="text-center"><%= month %></td>
+              <td class="text-center">
+                <%= lateness.length%>
+                <% if(user?.role !== 'ijro' && user?.role !== 'user') { %>
+                <a href="#" data-bs-toggle="modal" data-bs-target="#latenessModal-<%= date.id %>">
+                  <i class="fa-solid fa-eye"></i>
+                </a>
+                <% } %>
+              </td>
+              <td class="text-center">
+                <%= expiredTasks.length %>
+                <% if(user?.role !== 'kadr' && user?.role !== 'user') { %>
+                <a href="#" data-bs-toggle="modal" data-bs-target="#expiredTasksModal-<%= date.id %>"
+                  ><i class="fa-solid fa-eye"></i
+                ></a>
+                <% } %>
+              </td>
+            </tr>
+
+            <!-- Lateness Modal -->
+            <div
+              class="modal fade"
+              id="latenessModal-<%= date.id %>"
+              tabindex="-1"
+              aria-labelledby="latenessModalLabel-<%= date.id %>"
+              aria-hidden="true"
+            >
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="latenessModalLabel-<%= date.id %>">Kechikish ma'lumotlari</h5>
+                    <button
+                      type="button"
+                      class="btn-close"
+                      data-bs-dismiss="modal"
+                      aria-label="Close"
+                    ></button>
+                  </div>
+                  <div class="modal-body">
+                    <% lateness.forEach((late, index) => { const formatedDate = formatDate(late.lateDay); %>
+                    <p><strong>Sana:</strong> <%= formatedDate %></p>
+                    <p><strong>Kechikish vaqti:</strong> <%= late.lateTime %> minut</p>
+                    <p>
+                      <strong>Tushuntirish xati:</strong> <a href="/<%= late.explanationLetter%>"> Ko'rish</a>
+                    </p>
+                    <% if(user?.role === 'admin' || user?.role === 'superAdmin' || user?.role === 'kadr') { %>
+                    <div class="d-flex justify-content-around expiredInfo">
+                      <a href="/admin/updateLateness/<%= late.id%>-<%= employee.id%>" class="btn btn-primary"
+                        >Yangilash</a
+                      >
+                      <form action="/admin/lateness" method="POST">
+                        <input type="hidden" value="<%= late.id%>" name="latenessId" />
+                        <button class="btn btn-danger">O'chirish</button>
+                      </form>
+                    </div>
+                    <% } %> <% if (index !== lateness.length - 1) { %>
+                    <hr class="my-4" />
+                    <% } %> <% }) %>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- ExpiredTasks Modal -->
+            <div
+              class="modal fade"
+              id="expiredTasksModal-<%= date.id %>"
+              tabindex="-1"
+              aria-labelledby="expiredTasksModalLabel-<%= date.id %>"
+              aria-hidden="true"
+            >
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="expiredTasksModalLabel-<%= date.id %>">
+                      Muddati o'tgan xatlar ma'lumotlari
+                    </h5>
+                    <button
+                      type="button"
+                      class="btn-close"
+                      data-bs-dismiss="modal"
+                      aria-label="Close"
+                    ></button>
+                  </div>
+                  <div class="modal-body">
+                    <% expiredTasks.forEach((task, index) => { const formattedDate = formatDate(task.date); %>
+                    <p><strong>Hujjat raqami:</strong> <%= task.taskNumber %></p>
+                    <p><strong>Qaysi tashkilotdan:</strong> <%= task.organization %></p>
+                    <p><strong>Sanasi:</strong> <%= formattedDate %></p>
+                     <% if(user?.role === 'admin' || user?.role === 'superAdmin' || user?.role === 'ijro') { %>
+                    <div class="d-flex justify-content-around expiredInfo">
+                      <a
+                        href="/admin/updateExpiredTask/<%= task.id%>-<%=employee.id%>"
+                        class="btn btn-primary"
+                        >Yangilash</a
+                      >
+                      <form action="/admin/expirationLetter" method="POST">
+                        <input type="hidden" value="<%= task.id%>" name="taskId" />
+                        <button class="btn btn-danger">O'chirish</button>
+                      </form>
+                    </div>
+                    <% } %> <% if (index !== expiredTasks.length - 1) { %>
+                    <hr class="my-4" />
+                    <% } %> <% }) %>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <%- include('../includes/end.ejs') %>
+</div>

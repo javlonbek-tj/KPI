@@ -1,0 +1,61 @@
+ <%- include('../includes/head.ejs') %>
+            <div class="container-fluid px-4">
+              <% if(errorMessage) { %>
+             <h5 class="text-center text-danger mb-5"><%= errorMessage %></h5>
+              <% } %>
+            <section class="filter container-fluid fs-4 d-flex justify-content-center mx-auto">
+            <form class="cart" action="<%= update ? '/admin/updateExpiredTask' : '/admin/letterControl' %>" method="POST">
+              <div class="filtering addInfo">
+                <% if (update) { %>
+    <label for="date" class="fs-6">Sana</label>
+    <% } %>
+               <input
+  placeholder="Sana"
+  class="textbox-n"
+  name="date"
+  type="text"
+  onfocus="(this.type='date')"
+  id="date"
+  value="<%= (update || error) && date !== '' ? formatDate(date) : '' %>"
+/>
+              </div>
+              <div class="filtering addInfo">
+                 <% if (update) { %>
+    <label for="taskNumber" class="fs-6">Xat raqami</label>
+    <% } %>
+                <input
+            type="text"
+            name="taskNumber"
+            id="taskNumber"
+            placeholder="Hujjat raqami"
+            value="<%= (update || error) ? taskNumber : '' %>"
+          />
+              </div>
+              <div class="filtering addInfo">
+                  <% if (update) { %>
+    <label for="taskNumber" class="fs-6">Tashkilotdan</label>
+    <% } %>
+                <input
+            type="text"
+            name="organization"
+            id="organization"
+            placeholder="Qaysi tashkilotdan"
+            value="<%= (update || error) ? organization : '' %>"
+          />
+              </div>
+              <div>
+                <% if (update) { %>
+               <input type="hidden" name="expiredTaskId" value="<%= expiredTaskId %>">
+                <% } %>
+                <input type="hidden" name="employeeId" value="<%= employee.id%>">
+                <button type="submit" class="btn btn-primary"><%= update ? 'Yangilash' : 'Qo\'shish' %></button>
+              </div>
+            </form>
+          </section>
+
+            </div>
+        </div>
+    </div>
+    </div>
+    </div>
+ <%- include('../includes/end.ejs') %>

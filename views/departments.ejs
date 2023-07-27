@@ -1,0 +1,67 @@
+<%- include('./includes/head.ejs') %>
+
+<div class="container-fluid px-4">
+  <div class="row my-2">
+    <div class="col-3">
+      <input
+        type="text"
+        id="departmentFilter"
+        class="form-control mb-3 fixed-header"
+        placeholder="Bo'lim nomi bo'yicha qidirish"
+      />
+    </div>
+  </div>
+  <div class="row">
+    <div class="col">
+      <div class="attendance-list">
+        <table class="table table-bordered table-striped">
+          <thead class="table-white fixed-header">
+            <tr>
+              <th class="align-middle text-center">Tartib raqami</th>
+              <th class="align-middle text-center">Bo'lim nomi</th>
+              <th class="align-middle text-center">Xodimlar soni</th>
+              <th class="align-middle text-center">Vakansiyalar soni</th>
+              <th class="align-middle text-center">Xodimlar</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% for (let i = 0; i < departments.length; i++) { %> <% const department = departments[i]; %>
+            <tr>
+              <td class="align-middle text-center"><%= (i + 1) %></td>
+              <td class="align-middle text-center"><%= department.name %></td>
+              <td class="align-middle text-center"><%= department.numberOfEmployees %></td>
+              <td class="align-middle text-center"><%= department.vacancy %></td>
+              <td class="align-middle text-center">
+                <% let employeeCount = 1; %> <% for (let employee of department.users) { %>
+                <div class="mb-2">
+                  <a href="/admin/users/<%= employee.id %>" class="text-primary">
+                    <%= employeeCount %>. <%= employee.secondname %> <%= employee.firstname %> (<%= employee.position.name %>)
+                  </a>
+                </div>
+                <% employeeCount++; %> <% } %>
+              </td>
+            </tr>
+            <% } %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('./includes/end.ejs') %>
+
+<script>
+  document.getElementById('departmentFilter').addEventListener('keyup', function () {
+    const input = this.value.toLowerCase();
+    const rows = document.querySelectorAll('.attendance-list tbody tr');
+    rows.forEach(row => {
+      const departmentName = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
+      if (departmentName.includes(input)) {
+        row.style.display = 'table-row';
+      } else {
+        row.style.display = 'none';
+      }
+    });
+  });
+</script>

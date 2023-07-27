@@ -1,0 +1,58 @@
+ <%- include('../includes/head.ejs') %>
+            <div class="container-fluid px-4">
+              <% if(errorMessage) { %>
+             <h5 class="text-center text-danger mb-5"><%= errorMessage %></h5>
+              <% } %>
+            <section class="filter container-fluid fs-4 d-flex justify-content-center mx-auto ">
+<form class="cart" action="<%= update ? '/admin/updateLateness' : '/admin/addLateness' %>" method="POST" enctype="multipart/form-data">
+  <div class="filtering addInfo">
+    <% if (update) { %>
+    <label for="lateDay" class="fs-6">Sana</label>
+    <% } %>
+    <input
+      placeholder="Sana"
+      class="textbox-n"
+      name="lateDay"
+      type="text"
+      onfocus="(this.type='date')"
+      id="lateDay"
+      value="<%= (update || error) && lateDay !== '' ? formatDate(lateDay) : '' %>"
+    />
+  </div>
+  <div class="filtering addInfo">
+    <% if (update) { %>
+    <label for="lateTime" class="fs-6">Vaqti</label>
+    <% } %>
+    <input
+      type="text"
+      name="lateTime"
+      id="lateTime"
+      placeholder="Vaqti"
+      value="<%= (update || error) ? lateTime : '' %>"
+    />
+  </div>
+  <div class="filtering addInfo">
+    <label for="file-<%= employee.id %>" id="file-<%= employee.id %>-preview">
+      <p class="text-success upload-text">Tushuntirish xati <i class="fa-solid fa-upload"></i></p>
+    </label>
+    <input type="file" id="file-<%= employee.id %>" class="d-none" name="explanationLetter"/>
+    <p class="text-success upload-text d-none mt-2" id="file-<%= employee.id %>-uploaded">Yuklandi! <i class="fa-solid fa-file text-warning"></i></p>
+  </div>
+
+  <div>
+    <% if (update) { %>
+        <input type="hidden" name="latenessId" value="<%= latenessId %>">
+      <% } %>
+    <input type="hidden" name="employeeId" value="<%= employee.id %>">
+    <button type="submit" class="btn btn-primary"><%= update ? 'Yangilash' : 'Qo\'shish' %></button>
+  </div>
+</form>
+
+          </section>
+
+            </div>
+        </div>
+    </div>
+    </div>
+    </div>
+ <%- include('../includes/end.ejs') %>

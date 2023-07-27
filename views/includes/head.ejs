@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <title><%= pageTitle %></title>
+  </head>
+
+  <body>
+    <div class="d-flex" id="wrapper">
+      <!-- Sidebar -->
+      <div class="bg-white" id="sidebar-wrapper">
+        <div class="sidebar-heading text-center py-4 primary-text fs-5 fw-bold border-bottom">
+          <i class="fas fa-user me-2"></i> <%= user?.secondname%> <%= user?.firstname.charAt(0)%>
+        </div>
+        <div class="list-group list-group-flush my-3">
+          <a
+            id="reestr"
+            href="/"
+            class="list-group-item list-group-item-action bg-transparent second-text active"
+            ><i class="fa-solid fa-table me-2"></i>Xodimlar ro'yxati</a
+          >
+          <% if(user?.role === 'admin' || user?.role === 'superAdmin' || user?.role === 'kadr') { %>
+          <a
+            id="addEmployee"
+            href="/admin/addEmployee"
+            class="list-group-item list-group-item-action bg-transparent second-text fw-bold"
+            ><i class="fa-solid fa-user-plus me-2"></i>Xodim qo'shish</a
+          >
+          <a
+            id="addDepartment"
+            href="/admin/addDepartment"
+            class="list-group-item list-group-item-action bg-transparent second-text fw-bold"
+            ><i class="fa-solid fa-building-user me-2"></i>Bo'lim qo'shish</a
+          >
+          <a
+            id="addPosition"
+            href="/admin/addPosition"
+            class="list-group-item list-group-item-action bg-transparent second-text fw-bold"
+            ><i class="fa-solid fa-address-book me-2"></i>Lavozim qo'shish</a
+          >
+          <% } %>
+          <a
+            id="logout"
+            href="/logout"
+            class="list-group-item list-group-item-action bg-transparent text-danger fw-bold"
+            ><i class="fas fa-power-off me-2"></i>Chiqish</a
+          >
+        </div>
+      </div>
+      <!-- /#sidebar-wrapper -->
+      <div id="page-content-wrapper">
+        <nav class="navbar navbar-expand-lg navbar-light bg-transparent pt-4 px-4">
+          <div class="d-flex align-items-center">
+            <a href="/">
+              <img
+              src="/image/Palata.1.png"
+              alt="DKP"
+              class="fs-4 me-3 text-primary"
+              id="menu-toggle"
+              style="width: 140px; height: 40px"
+            />
+            </a>
+          </div>
+
+          <button
+            class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+          >
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <!-- <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle second-text fw-bold" href="#" id="navbarDropdown"
+                                role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-user me-2"></i>admin
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <li><a class="dropdown-item" href="/users/userProfile">Profilim</a></li>
+                                <li><a class="dropdown-item" href="#">Sozlamalar</a></li>
+                                <li><a class="dropdown-item" href="/logout">Chiqish</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div> -->
+        </nav>
+  
+

@@ -1,0 +1,90 @@
+ <%- include('../includes/head.ejs') %>
+            <div class="container-fluid px-4">
+  <% if (errorMessage) { %>
+  <h5 class="text-center text-danger mb-5"><%= errorMessage %></h5>
+  <% } %>
+  <section class="addPosition fs-4 d-flex justify-content-center mx-auto">
+  <form class="cart" action="/admin/addPosition" method="POST">
+    <div class="filtering addInfo">
+      <input type="text" name="position" id="position" placeholder="Lavozim nomi" style="width: 300px;" />
+    </div>
+    <div>
+      <button type="submit" class="btn btn-info">Qo'shish</button>
+    </div>
+  </form>
+</section>
+
+  <div class="row mt-4">
+    <div class="col-3">
+      <input
+        type="text"
+        id="positionFilter"
+        class="form-control mb-3 fixed-header"
+        placeholder="Lavozim nomi bo'yicha qidirish"
+      />
+    </div>
+  </div>
+  <% if (positions && positions.length > 0) { %>
+  <div class="row mt-4 d-flex flex-wrap">
+    <% positions.forEach(function (position, index) { %>
+      <div class="col-md-4 mb-4">
+        <div class="card h-100">
+          <div class="card-body">
+            <h5 class="card-title"><%= (index + 1) %>. <%= position.name %></h5>
+            <a href="#" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#positionModal<%= position.id %>">O'zgartirish</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal -->
+      <div class="modal fade" id="positionModal<%= position.id %>" tabindex="-1" aria-labelledby="positionModalLabel<%= position.id %>" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h6 class="modal-title" id="positionModalLabel<%= position.id %>">O'zgartirish: <%= position.name %></h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+               <section class="filter container-fluid fs-4 d-flex justify-content-center mx-auto">
+    <form class="cart" action="/admin/updatePosition" method="POST">
+      <div class="filtering addInfo">
+        <input type="text" name="position" id="position" value="<%= position.name %>" />
+        <input type="hidden" name="positionId" value="<%= position.id %>">
+      </div>
+      <div>
+        <button type="submit" class="btn btn-warning">Saqlash</button>
+      </div>
+    </form>
+  </section>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% }) %>
+  </div>
+<% } %>
+
+
+</div>
+
+        </div>
+    </div>
+    </div>
+    </div>
+    <script>
+  document.getElementById('positionFilter').addEventListener('keyup', function () {
+    const input = this.value.toLowerCase();
+    const cards = document.querySelectorAll('.card');
+
+    cards.forEach(card => {
+      const positionName = card.querySelector('.card-title').textContent.toLowerCase();
+      if (positionName.includes(input)) {
+        card.style.display = 'block';
+      } else {
+        card.style.display = 'none';
+      }
+    });
+  });
+</script>
+
+ <%- include('../includes/end.ejs') %>
