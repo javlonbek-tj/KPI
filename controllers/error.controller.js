@@ -15,7 +15,7 @@ const sendErrorDev = (err, req, res) => {
 const sendErrorProd = (err, req, res) => {
   res.status(err.statusCode).render('error', {
     pageTitle: 'Xatolik!',
-    msg: "Xatolik sodir bo'ldi. Iltimos qaytadan urinib ko'ring",
+    msg: "err.msg",
   });
 };
 export const globalErrorHandler = (err, req, res, next) => {
