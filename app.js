@@ -2,6 +2,7 @@ import express from 'express';
 import dotenv from 'dotenv';
 import path from 'path';
 import cookieParser from 'cookie-parser';
+import helmet from 'helmet';
 import compression from 'compression';
 import { globalErrorHandler, get404 } from './controllers/error.controller.js';
 import pg from './services/pg.js';
@@ -34,11 +35,11 @@ async function start() {
     app.use(express.urlencoded({ extended: true }));
     app.use(cookieParser());
 
-    /* app.use(
+    app.use(
       helmet({
         contentSecurityPolicy: false,
       }),
-    ); */
+    );
     app.use(compression());
 
     app.use((req, res, next) => {
