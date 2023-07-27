@@ -132,7 +132,7 @@ class HomeController {
         users,
       });
     } catch (e) {
-      console.log(e);
+      next(e);
     }
   }
 
