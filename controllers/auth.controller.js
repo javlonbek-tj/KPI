@@ -15,6 +15,7 @@ class AuthController {
       const { login, password } = req.body;
       await authService.postLogin(req, res, login, password);
     } catch (e) {
+      console.log(e);
       next(e);
     }
   }
