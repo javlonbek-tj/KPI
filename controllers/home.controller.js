@@ -105,6 +105,8 @@ class HomeController {
       });
       filteredUsers.pop();
       filteredUsers.push(allEmployees);
+
+
       const paginatedEmployees = allEmployees.slice(offset, offset + limit);
       const isOverLimit = count > limit;
       return res.render('home', {
@@ -197,6 +199,149 @@ class HomeController {
         pageTitle: `Muddat buzilishlar`,
         expiredTasks: currentExpiredTasks,
         formatDate
+      });
+    } catch (e) {
+      next(e);
+    }
+  }
+
+  async home2Page(req, res, next) {
+    try {
+      const { department, position, users, expiredTasks, date, lateness } = req.db;
+      const departments = await department.findAll({ raw: true });
+      const positions = await position.findAll({ raw: true });
+
+      const page = parseInt(req.query.page) || 1;
+      const limit = 13;
+      const {departmentId, fullname, from, to } = req.query;
+      const offset = (Math.abs(page) - 1) * Math.abs(limit);
+
+      let whereClause = {};
+
+    if (departmentId || fullname || from || to) {
+        const fromDate = from ? new Date(from) : null;
+        const toDate = to ? new Date(to) : null;
+        whereClause = filtering(departmentId, fullname, fromDate, toDate);
+      }
+      const { rows, count } = await users.findAndCountAll({
+        where: whereClause,
+        include: [
+          { model: department },
+          { model: expiredTasks },
+          { model: lateness },
+          { model: position },
+          { model: date },
+        ],
+        subQuery: false,
+      });
+      const currentMonth = new Date().getMonth();
+      const allEmployees = rows.map(employee => {
+        const formattedDates = employee.dates.map(date => ({
+          ...date.toJSON(),
+          date: getMonth(date.date),
+        }));
+        const fromDate = from ? new Date(from) : null;
+        const toDate = to ? new Date(to) : null;
+
+        const expiredTasksCount = employee.expiredTasks.length;
+        const expiredTasksPunishment = expiredTasksCount;
+
+     
+        // Calculate punishment based on lateness entries
+        const latenessPunishment = employee.latenesses.reduce(
+          (totalPunishment, late) => totalPunishment + parseInt(late.lateTime) * 0.5,
+          0,
+        );
+        // Total punishment for the user
+        const totalPunishment = expiredTasksPunishment + latenessPunishment;
+
+        const filteredExpiredTasks = employee.expiredTasks.filter(task => {
+          const taskDate = new Date(task.date);
+          if (fromDate && toDate) {
+            return taskDate >= fromDate && taskDate <= toDate;
+          } else if (fromDate) {
+            return taskDate >= fromDate;
+          } else if (toDate) {
+            return taskDate <= toDate;
+          } else {
+            return taskDate.getMonth() === currentMonth;
+          }
+        });
+      
+      const tasksInProcess = filteredExpiredTasks.filter(task => task.status === 'Jarayonda');
+        const tasksFinished = filteredExpiredTasks.filter(task => task.status === 'Yakunlangan');
+
+
+        const filteredLateness = employee.latenesses.filter(late => {
+          const lateDate = new Date(late.lateDay);
+          if (fromDate && toDate) {
+            return lateDate >= fromDate && lateDate <= toDate;
+          } else if (fromDate) {
+            return lateDate >= fromDate;
+          } else if (toDate) {
+            return lateDate <= toDate;
+          } else {
+            return lateDate.getMonth() === currentMonth;
+          }
+        });
+        return {
+          ...employee.toJSON(),
+          dates: formattedDates,
+          tasksInProcess,
+          tasksFinished,
+          latenesses: filteredLateness,
+          punishment: totalPunishment,
+        };
+      });
+      filteredUsers.pop();
+      filteredUsers.push(allEmployees);
+
+
+const groupedDepartments = {};
+
+allEmployees.forEach(employee => {
+  const { department } = employee;
+
+  if (department && department.name) {
+    if (!groupedDepartments[department.name]) {
+      groupedDepartments[department.name] = {
+        department: department.name,
+        employees: [],
+        tasksInProcess: [],
+        tasksFinished: [],
+        latenesses: [],
+        dates: []
+      };
+    }
+
+    groupedDepartments[department.name].tasksInProcess.push(...employee.tasksInProcess);
+    groupedDepartments[department.name].tasksFinished.push(...employee.tasksFinished);
+
+    groupedDepartments[department.name].employees.push(employee);
+    groupedDepartments[department.name].dates.push(...employee.dates);
+    groupedDepartments[department.name].dates.push(...employee.latenesses);
+  }
+});
+
+      const allGroupedDepartments = Object.values(groupedDepartments);
+      const paginatedGroupedDepartments = allGroupedDepartments.slice(offset, offset + limit);
+      const isOverLimit = count > limit;
+      return res.render('home2', {
+        pageTitle: 'Davlat kadastrlari palatasi',
+        departments,
+        positions,
+        isOverLimit,
+        currentPage: page,
+        hasNextPage: limit * page < count,
+        hasPreviousPage: page > 1,
+        nextPage: page + 1,
+        previousPage: page - 1,
+        lastPage: Math.ceil(count / limit),
+        total: count,
+        limit,
+        query: req.query,
+        allEmployees,
+        groupedDepartments: paginatedGroupedDepartments
       });
     } catch (e) {
       next(e);

@@ -9,5 +9,6 @@ homeRoutes.get('/', isAuth, homeController.homePage);
 homeRoutes.get('/departments', isAuth, homeController.getDepartments);
 homeRoutes.get('/latenesses', isAuth, homeController.getLatenesses);
 homeRoutes.get('/expiredTasks', isAuth, homeController.getExpiredTasks);
+homeRoutes.get('/groupedDepartments', isAuth, homeController.home2Page);
 
 export default homeRoutes;

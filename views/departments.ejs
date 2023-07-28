@@ -21,7 +21,6 @@
               <th class="align-middle text-center">Bo'lim nomi</th>
               <th class="align-middle text-center">Xodimlar soni</th>
               <th class="align-middle text-center">Vakansiyalar soni</th>
-              <th class="align-middle text-center">Xodimlar</th>
             </tr>
           </thead>
           <tbody>
@@ -31,15 +30,6 @@
               <td class="align-middle text-center"><%= department.name %></td>
               <td class="align-middle text-center"><%= department.numberOfEmployees %></td>
               <td class="align-middle text-center"><%= department.vacancy %></td>
-              <td class="align-middle text-center">
-                <% let employeeCount = 1; %> <% for (let employee of department.users) { %>
-                <div class="mb-2">
-                  <a href="/admin/users/<%= employee.id %>" class="text-primary">
-                    <%= employeeCount %>. <%= employee.secondname %> <%= employee.firstname %> (<%= employee.position.name %>)
-                  </a>
-                </div>
-                <% employeeCount++; %> <% } %>
-              </td>
             </tr>
             <% } %>
           </tbody>

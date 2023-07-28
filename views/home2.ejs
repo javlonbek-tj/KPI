@@ -104,7 +104,7 @@
                 </div>
 
             <section class="filter container-fluid fs-4 d-flex justify-content-center mx-auto">
-            <form class="filter_items" action="/" method="GET">
+            <form class="filter_items" action="/groupedDepartments" method="GET">
               <div class="filtering">
                 <select name="departmentId" id="departmentId" onchange="updateUsers()">
                 <option selected disabled>Bo'lim</option>
@@ -113,11 +113,6 @@
               <% } %>
 
 
-                </select>
-              </div>
-              <div class="filtering">
-                <select name="fullname" id="fullname">
-                  <option selected disabled>Bo'limni tanlang</option>>
                 </select>
               </div>
               <div class="filtering">
@@ -138,9 +133,6 @@
   onfocus="(this.type='date')"
   id="date" />
               </div>
-              <div class="filtering">
-                <input type="text" placeholder="Ism Familiyasi" name="search" />
-              </div>
               <div class="filtering d-flex">
                 <button type="submit" class="ps-2">Qidirish</button>
                 <a href="/admin/excel">Excel</a>
@@ -150,50 +142,27 @@
 
                 <div class="row my-2">
                     <div class="attendance-list">
-                      <div class="mt-2">
-                        <a href="/groupedDepartments" class="fw-bold">Bo'limlar bo'yicha</a>
+                        <div class="mt-2">
+                        <a href="/" class="fw-bold">Xodimlar bo'yicha</a>
                       </div>
             <table class="table">
               <thead>
                 <tr>
                   <th class="align-middle text-center">Bo'lim nomi</th>
-                  <th class="align-middle text-center">Xodim F.I.SH</th>
-                  <th class="align-middle text-center">Lavozimi</th>
                   <th class="align-middle text-center">Oy</th>
-                  <th class="align-middle text-center">Kechikishlar soni</th>
                   <th class="align-middle text-center">Muddati o'tgan xatlar</th>
                   <th class="align-middle text-center">Muddati o'tib imzolangan</th>
-                  <th class="align-middle text-center">Batafsil</th>
-                   <% if(user?.role === 'admin' || user?.role === 'superAdmin' || user?.role === 'kadr') { %>
-                  <th class="align-middle text-center">Kechikish</th>
-                   <% } %>
-                    <% if(user?.role === 'admin' || user?.role === 'superAdmin' || user?.role === 'ijro') { %>
-                  <th class="align-middle text-center">Ijro intizomi</th>
-                  <% } %>
-                  <th class="align-middle text-center">Jazo</th>
+                  <th class="align-middle text-center">Kechikishlar soni</th>
                 </tr>
               </thead>
               <tbody>
-     <% for (let employee of employees) { %>
+     <% for (let groupedDepartment of groupedDepartments) { %>
   <tr class="align-middle">
-    <td class="text-center"><%= employee.department.name %></td>
-    <td class="text-center"><%= employee.secondname %> <%= employee.firstname %></td>
-    <td class="text-center"><%= employee.position.name %></td>
-    <td class="text-center"><%= employee.dates[employee.dates.length - 1]?.date %></td>
-    <td class="text-center <%= ((employee.id !== user.id && user.role === 'user') || (user.role === 'ijro' && employee.id !== user.id)) ? 'blur-effect' : '' %>"><%= employee.latenesses.length %></td>
-    <td class="text-center <%= ((employee.id !== user.id && user.role === 'user') || (user.role === 'kadr' && employee.id !== user.id)) ? 'blur-effect' : '' %>"><%= employee.tasksInProcess.length %></td>
-    <td class="text-center <%= ((employee.id !== user.id && user.role === 'user') || (user.role === 'kadr' && employee.id !== user.id)) ? 'blur-effect' : '' %>"><%= employee.tasksFinished.length %></td>
-    <td class="text-center"><a href="/admin/users/<%= employee.id %>" class="detail <%= (employee.id !== user.id && user.role === 'user') ? 'disabled' : '' %>">Ko'rish</a></td>
-     <% if(user?.role === 'admin' || user?.role === 'superAdmin' || user?.role === 'kadr') { %>
-    <td class="text-center"><a href="/admin/lateness/<%= employee.id %>" class="late">Kadr</a></td>
-    <% } %>
-     <% if(user?.role === 'admin' || user?.role === 'superAdmin' || user?.role === 'ijro') { %>
-    <td class="text-center"><a href="/admin/letterControl/<%= employee.id %>" class="letterControl">Ijro</a></td>
-    <% } %>
-    <td class="text-center">
-  <%= employee.punishment !== null ? employee.punishment + '%' : '-' %>
-</td>
-
+    <td class="text-center"><%= groupedDepartment.department %></td>
+    <td class="text-center"><%=  groupedDepartment.dates[groupedDepartment.dates.length - 1]?.date%></td>
+    <td class="text-center"><%= groupedDepartment.tasksInProcess.length %></td>
+    <td class="text-center"><%= groupedDepartment.tasksFinished.length %></td>
+    <td class="text-center"><%= groupedDepartment.latenesses.length %></td>
   </tr>
 <% } %>
 

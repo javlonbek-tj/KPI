@@ -24,6 +24,7 @@ const sequelize = new Sequelize(
   }
 ); */
 
+
 const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, process.env.DB_PASSWORD,
   {
     dialect: 'postgres',
@@ -49,9 +50,6 @@ export default async function pg() {
     db.date = await DateModel(sequelize, Sequelize);
 
     await Relations(db);
-    /* if (isDevelopment) {
-      await sequelize.sync({ force: false });
-    } */
     return db;
   } catch (err) {
     console.log(err);
