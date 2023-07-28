@@ -43,6 +43,16 @@
             value="<%= (update || error) ? organization : '' %>"
           />
               </div>
+              <div class="filtering addInfo">
+        <% if (update) { %>
+          <label for="status" class="fs-6">Holati</label>
+        <% } %>
+        <select name="status" id="status">
+          <option <%= (!error || !status || !update) ? 'selected' : '' %> disabled>Holati</option>
+          <option value="Jarayonda" <%= (status === 'Jarayonda') ? 'selected' : '' %>>Jarayonda</option>
+          <option value="Yakunlangan" <%= (status === 'Yakunlangan') ? 'selected' : '' %>>Yakunlangan</option>
+        </select>
+      </div>
               <div>
                 <% if (update) { %>
                <input type="hidden" name="expiredTaskId" value="<%= expiredTaskId %>">

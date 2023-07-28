@@ -1,19 +1,25 @@
 <%- include('./includes/head.ejs') %>
 
 <div class="container-fluid px-4">
-  <div class="row my-2">
-    <div class="col-3">
-      <input
-        type="text"
-        id="latenessFilter"
-        class="form-control mb-3 fixed-header"
-        placeholder="Bo'lim nomi bo'yicha qidirish"
-      />
+  <div class="row my-2 me-3 d-flex align-items-center mb-3">
+  <div class="col-md-3 align-items-center"> 
+    <input
+      type="text"
+      id="expiredTasksFilter"
+      class="form-control fixed-header"
+      placeholder="Bo'lim nomi bo'yicha qidirish"
+    />
+  </div>
+  <div class="col-md-1">
+    <div class="filtering">
+      <a href="/admin/expiredTasksExcel">Excel</a>
     </div>
   </div>
+</div>
+
   <div class="row">
     <div class="col">
-      <div class="lateness-list">
+      <div class="expiredTask-list">
         <table class="table table-bordered table-striped">
           <thead class="table-white fixed-header">
             <tr>
@@ -37,13 +43,6 @@
               <td class="align-middle text-center"><%= task.organization%></td>
               <td class="align-middle text-center"><%= formatedDate%></td>
             </tr>
-            <% if (index !== expiredTasks.length - 1) { %>
-              <tr>
-                <td colspan="6">
-                  <hr />
-                </td>
-              </tr>
-            <% } %>
             <% }); %>
           </tbody>
         </table>
@@ -55,9 +54,9 @@
 <%- include('./includes/end.ejs') %>
 
 <script>
-  document.getElementById('latenessFilter').addEventListener('keyup', function () {
+  document.getElementById('expiredTasksFilter').addEventListener('keyup', function () {
     const input = this.value.toLowerCase();
-    const rows = document.querySelectorAll('.lateness-list tbody tr');
+    const rows = document.querySelectorAll('.expiredTask-list tbody tr');
     rows.forEach(row => {
       const departmentName = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
       if (departmentName.includes(input)) {

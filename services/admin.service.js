@@ -113,6 +113,7 @@ const renderExpiredTask = async (
   organization = '',
   expiredTaskId = '',
   formatDate = '',
+  status = 'Jarayonda'
 ) => {
   const employee = await req.db.users.findOne({ where: { id } });
   return res.render('admin/addletterControl', {
@@ -126,6 +127,7 @@ const renderExpiredTask = async (
     organization,
     expiredTaskId,
     formatDate,
+    status
   });
 };
 
@@ -488,7 +490,7 @@ class AdminService {
 
   async updateExpiredTaskPage(employeeId, letterId, req, res) {
     const letterInfo = await req.db.expiredTasks.findByPk(letterId);
-    const { taskNumber, date, organization, id } = letterInfo;
+    const { taskNumber, date, organization, id, status } = letterInfo;
     const errorMessage = '';
     renderExpiredTask(
       employeeId,
@@ -502,6 +504,7 @@ class AdminService {
       organization,
       id,
       formatDate,
+      status
     );
   }
 
@@ -558,17 +561,18 @@ class AdminService {
     res.redirect(`/admin/users/${userId}`);
   }
 
-  async updateExpiredLetter(userId, expiredTaskId, req, res, taskNumber, organization, date) {
+  async updateExpiredLetter(userId, expiredTaskId, req, res, taskNumber, organization, date, status) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       const errorMessage = errors.array()[0].msg;
-      return renderExpiredTask(userId, req, res, errorMessage);
+      return renderExpiredTask(userId, req, res, errorMessage, true, true, date, taskNumber, organization, expiredTaskId, formatDate, status);
     }
     const oldExpiredTask = await req.db.expiredTasks.findByPk(expiredTaskId);
    if (oldExpiredTask) {
     oldExpiredTask.taskNumber = taskNumber;
     oldExpiredTask.organization = organization;
     oldExpiredTask.date = date;
+    oldExpiredTask.status = status;
     await oldExpiredTask.save();
   }
     res.redirect(`/admin/users/${userId}`);
@@ -705,6 +709,43 @@ class AdminService {
           dates: user.dates[0].date,
           expiredTasks: user.expiredTasks.length,
           latenesses: user.latenesses.length,
+        };
+
+        worksheet.addRow(rowData); // Add data in worksheet
+        counter++;
+      });
+    }
+
+    // Making the first line in excel bold
+    worksheet.getRow(1).eachCell(cell => {
+      cell.font = { bold: true };
+    });
+
+    return workbook;
+  }
+
+  async getExpiredTasksExcel(filteredTasks) {
+    const workbook = new excelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Xatlar');
+    worksheet.columns = [
+      { header: '№', key: 'id', width: 10 },
+      { header: "Bo'lim", key: 'department', width: 10 },
+      { header: 'Xodim', key: 'fullname', width: 10 },
+      { header: 'Hujjat raqami', key: 'taskNumber', width: 10 },
+      { header: 'Qaysi tashkilotdan', key: 'organization', width: 10 },
+      { header: 'Muddat buzilgan sana', key: 'date', width: 10 },
+    ];
+
+    let counter = 1;
+    if (filteredTasks.length > 0) {
+      filteredTasks[0].forEach(task => {
+        const rowData = {
+          id: counter,
+          department: task.user.department.name,
+          fullname: task.user.fullname,
+          taskNumber: task.taskNumber,
+          organization: task.organization,
+          date: task.date,
         };
 
         worksheet.addRow(rowData); // Add data in worksheet

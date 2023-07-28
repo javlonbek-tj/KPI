@@ -1,5 +1,5 @@
 import adminService from '../services/admin.service.js';
-import { filteredUsers } from './home.controller.js';
+import { filteredUsers, tasks } from './home.controller.js';
 
 class AdminController {
   async getRegister(req, res, next) {
@@ -194,7 +194,7 @@ class AdminController {
 
   async postUpdateExpiredTask(req, res, next) {
     try {
-      const { employeeId, expiredTaskId, taskNumber, organization, date } = req.body;
+      const { employeeId, expiredTaskId, taskNumber, organization, date, status } = req.body;
       await adminService.updateExpiredLetter(
         employeeId,
         expiredTaskId,
@@ -203,6 +203,7 @@ class AdminController {
         taskNumber,
         organization,
         date,
+        status
       );
     } catch (e) {
       next(e);
@@ -249,7 +250,20 @@ class AdminController {
         res.status(200);
       });
     } catch (e) {
-      console.log(e);
+      next(e);
+    }
+  }
+  async downloadTasksExcel(req, res, next) {
+    try {
+      const workbook = await adminService.getExpiredTasksExcel(tasks);
+      res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+      res.setHeader('Content-Disposition', `attachment; filename=Xatlar.xlsx`);
+
+      return workbook.xlsx.write(res).then(() => {
+        res.status(200);
+      });
+    } catch (e) {
+      next(e);
     }
   }
 }

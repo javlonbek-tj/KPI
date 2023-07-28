@@ -62,7 +62,7 @@
                     <% if (employee.dates && employee.dates.length > 0) { %>
                       <% currentMonth = (employee.dates[employee.dates.length - 1]?.date).split(' ')[3]; %>
                     <% } %>
-                    <% overallExpiredTasks += employee.expiredTasks.length; %>
+                    <% overallExpiredTasks += employee.tasksInProcess.length; %>
                   <% } %>
                   <% const isAdminOrIjro = ['admin', 'superAdmin', 'ijro'].includes(user?.role); %>
                   <% if (isAdminOrIjro) { %>
@@ -159,6 +159,7 @@
                   <th class="align-middle text-center">Oy</th>
                   <th class="align-middle text-center">Kechikishlar soni</th>
                   <th class="align-middle text-center">Muddati o'tgan xatlar</th>
+                  <th class="align-middle text-center">Muddati o'tib imzolangan</th>
                   <th class="align-middle text-center">Batafsil</th>
                    <% if(user?.role === 'admin' || user?.role === 'superAdmin' || user?.role === 'kadr') { %>
                   <th class="align-middle text-center">Kechikish</th>
@@ -167,7 +168,6 @@
                   <th class="align-middle text-center">Ijro intizomi</th>
                   <% } %>
                   <th class="align-middle text-center">Jazo</th>
-                  <th class="align-middle text-center"></th>
                 </tr>
               </thead>
               <tbody>
@@ -178,19 +178,17 @@
     <td class="text-center"><%= employee.position.name %></td>
     <td class="text-center"><%= employee.dates[employee.dates.length - 1]?.date %></td>
     <td class="text-center <%= ((employee.id !== user.id && user.role === 'user') || (user.role === 'ijro' && employee.id !== user.id)) ? 'blur-effect' : '' %>"><%= employee.latenesses.length %></td>
-    <td class="text-center <%= ((employee.id !== user.id && user.role === 'user') || (user.role === 'kadr' && employee.id !== user.id)) ? 'blur-effect' : '' %>"><%= employee.expiredTasks.length %></td>
+    <td class="text-center <%= ((employee.id !== user.id && user.role === 'user') || (user.role === 'kadr' && employee.id !== user.id)) ? 'blur-effect' : '' %>"><%= employee.tasksInProcess.length %></td>
+    <td class="text-center <%= ((employee.id !== user.id && user.role === 'user') || (user.role === 'kadr' && employee.id !== user.id)) ? 'blur-effect' : '' %>"><%= employee.tasksFinished.length %></td>
     <td class="text-center"><a href="/admin/users/<%= employee.id %>" class="detail <%= (employee.id !== user.id && user.role === 'user') ? 'disabled' : '' %>">Ko'rish</a></td>
      <% if(user?.role === 'admin' || user?.role === 'superAdmin' || user?.role === 'kadr') { %>
-    <td class="text-center"><a href="/admin/lateness/<%= employee.id %>" class="late">Kechikish</a></td>
+    <td class="text-center"><a href="/admin/lateness/<%= employee.id %>" class="late">Kadr</a></td>
     <% } %>
      <% if(user?.role === 'admin' || user?.role === 'superAdmin' || user?.role === 'ijro') { %>
     <td class="text-center"><a href="/admin/letterControl/<%= employee.id %>" class="letterControl">Ijro</a></td>
     <% } %>
     <td class="text-center">
   <%= employee.punishment !== null ? employee.punishment + '%' : '-' %>
-</td>
-    <td class="text-center">
-  <img src="<%= employee.photo ? employee.photo : '/image/commentUser.png' %>" alt="" class="img-fluid bg-light rounded-full userImg">
 </td>
 
   </tr>

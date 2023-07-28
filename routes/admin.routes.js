@@ -124,5 +124,6 @@ adminRoutes.post(
   adminController.updateEmployee,
 );
 adminRoutes.get('/excel', isAuth, adminController.downloadExcel);
+adminRoutes.get('/expiredTasksExcel', isAuth, adminController.downloadTasksExcel);
 
 export default adminRoutes;

@@ -373,10 +373,6 @@ input:-webkit-autofill:active {
   font-size: 13px;
   padding: 3px 5px;
 }
-.userImg {
-  width: 40px;
-  height: 35px;
-}
 .blur-effect {
     filter: blur(5px); /* Adjust the blur radius as desired */
     background-color: #ff0000; /* Choose the desired background color */
@@ -422,12 +418,6 @@ input:-webkit-autofill:active {
   }
 }
 
-@media (min-width: 1400px) {
-  .userImg {
-    width: 47px;
-    height: 32px;
-  }
-}
 
 @media (min-width: 1838px) {
   .filter_items {
@@ -442,8 +432,5 @@ input:-webkit-autofill:active {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr;
   }
-  .userImg {
-    width: 45px;
-    height: 35px;
-  }
+
 }

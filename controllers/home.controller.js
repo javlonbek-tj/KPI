@@ -4,6 +4,7 @@ import { getMonth } from '../utils/formateDate.js';
 import { formatDate } from '../utils/formateDate.js';
 
 export let filteredUsers = [];
+export let tasks = [];
 
 class HomeController {
   async homePage(req, res, next) {
@@ -55,8 +56,7 @@ class HomeController {
         const expiredTasksCount = employee.expiredTasks.length;
         const expiredTasksPunishment = expiredTasksCount;
 
-        let tasks;
-        let latenesses;
+     
         // Calculate punishment based on lateness entries
         const latenessPunishment = employee.latenesses.reduce(
           (totalPunishment, late) => totalPunishment + parseInt(late.lateTime) * 0.5,
@@ -77,6 +77,10 @@ class HomeController {
             return taskDate.getMonth() === currentMonth;
           }
         });
+      
+      const tasksInProcess = filteredExpiredTasks.filter(task => task.status === 'Jarayonda');
+        const tasksFinished = filteredExpiredTasks.filter(task => task.status === 'Yakunlangan');
+
 
         const filteredLateness = employee.latenesses.filter(late => {
           const lateDate = new Date(late.lateDay);
@@ -93,7 +97,8 @@ class HomeController {
         return {
           ...employee.toJSON(),
           dates: formattedDates,
-          expiredTasks: filteredExpiredTasks,
+          tasksInProcess,
+          tasksFinished,
           latenesses: filteredLateness,
           punishment: totalPunishment,
         };
@@ -185,9 +190,12 @@ class HomeController {
           const taskDate = new Date(task.date);
         return taskDate.getMonth() === currentMonth;
       });
+      const currentExpiredTasks = filteredExpiredTasks.filter(task => task.status === 'Jarayonda');
+      tasks.pop();
+      tasks.push(currentExpiredTasks);
       return res.render('expiredTasks', {
         pageTitle: `Muddat buzilishlar`,
-        expiredTasks: filteredExpiredTasks,
+        expiredTasks: currentExpiredTasks,
         formatDate
       });
     } catch (e) {

@@ -17,5 +17,10 @@ export default function ExpiredTaskModel(sequelize, Sequelize) {
       type: Sequelize.DataTypes.DATE,
       allowNul: false,
     },
+    status: {
+      type: Sequelize.DataTypes.STRING,
+      defaultValue: 'Jarayonda',
+      allowNull: false,
+    }
   });
 }
