@@ -220,7 +220,7 @@ class AdminService {
     }
     const hashPassword = await bcrypt.hash(password, 10);
     const highestExistingId = await req.db.users.max('id');
-    const newId = highestExistingId + 1;
+    const newId = highestExistingId ? highestExistingId + 1 : 1;
     const employee = await req.db.users.create({
       id: newId,
       firstname,
@@ -259,7 +259,7 @@ class AdminService {
       return renderAddPosition(req, res, 'Ushbu lavozim oldin kiritilgan');
     }
     const highestExistingPositionId = await req.db.position.max('id');
-    const newPositionId = highestExistingPositionId + 1;
+    const newPositionId = highestExistingPositionId ? highestExistingPositionId + 1 : 1;
     await req.db.position.create({
       id: newPositionId,
       name,
@@ -290,7 +290,7 @@ class AdminService {
       );
     }
     const highestExistingDepartmentId = await req.db.department.max('id');
-    const newDepartmentId = highestExistingDepartmentId + 1;
+    const newDepartmentId = highestExistingDepartmentId ? highestExistingDepartmentId + 1 : 1;
     await req.db.department.create({
       id: newDepartmentId,
       name,
@@ -366,7 +366,7 @@ class AdminService {
       );
     }
     const highestExistingLatenessId = await req.db.lateness.max('id');
-    const newLatenessId = highestExistingLatenessId + 1;
+    const newLatenessId = highestExistingLatenessId ? highestExistingLatenessId + 1 : 1;
     await req.db.lateness.create({ id: newLatenessId, userId, lateDay, lateTime, explanationLetter });
     res.redirect('/');
   }
@@ -395,7 +395,7 @@ class AdminService {
       );
     }
     const highestExistingExpiredTaskId = await req.db.expiredTasks.max('id');
-    const newexpiredTasksId = highestExistingExpiredTaskId + 1;
+    const newexpiredTasksId = highestExistingExpiredTaskId ? highestExistingExpiredTaskId + 1 : 1;
     await req.db.expiredTasks.create({ id: newexpiredTasksId, userId, taskNumber, organization, date });
     res.redirect('/');
   }

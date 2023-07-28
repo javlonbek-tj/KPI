@@ -30,6 +30,7 @@ export default async function pg() {
     await sequelize.authenticate();
 
       console.log('Database connection has been established successfully.');
+      
     // create database object
     let db = {};
     db.users = await UsersModel(sequelize, Sequelize);

@@ -6,7 +6,7 @@ class AuthController {
     try {
       return await authService.getLogin(res);
     } catch (e) {
-      console.log(e);
+      next();
     }
   }
 
@@ -15,7 +15,6 @@ class AuthController {
       const { login, password } = req.body;
       await authService.postLogin(req, res, login, password);
     } catch (e) {
-      console.log(e);
       next(e);
     }
   }
@@ -44,7 +43,7 @@ class AuthController {
         req.user = currentUser;
         return next();
       } catch (e) {
-        console.log(e);
+        next(e);
       }
     }
     next();

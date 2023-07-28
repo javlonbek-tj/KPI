@@ -19,7 +19,6 @@ class AuthService {
   }
 
   async postLogin(req, res, login, password) {
-    try {
        const candidate = await req.db.users.findOne({ where: { login } });
     if (!candidate) {
       const errorMessage = 'Login yoki parol xato';
@@ -41,9 +40,6 @@ class AuthService {
       secure: req.secure || req.headers['x-forwarded-proto'] === 'https',
     });
     res.redirect('/');
-    } catch (e) {
-      console.log(e);
-    }
   }
 }
 
