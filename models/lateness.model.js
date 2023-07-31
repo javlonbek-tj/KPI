@@ -15,7 +15,7 @@ export default function LatenessModel(sequelize, Sequelize) {
     },
     explanationLetter: {
       type: Sequelize.DataTypes.STRING,
-      allowNul: false,
+      allowNul: true,
     },
   });
 }

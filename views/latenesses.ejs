@@ -36,8 +36,13 @@
               <td class="align-middle text-center"><%= formatedDate %></td>
               <td class="align-middle text-center"><%= late.lateTime %> minut</td>
               <td class="align-middle text-center">
+              <% if (late.explanationLetter) { %>
                 <a href="/<%= late.explanationLetter %>">Ko'rish</a>
-              </td>
+              <% } else { %>
+                <p>Taqdim etilmadi</p>
+              <% } %>
+            </td>
+
             </tr>
             <% }); %>
           </tbody>

@@ -1,5 +1,5 @@
 import adminService from '../services/admin.service.js';
-import { filteredUsers, tasks } from './home.controller.js';
+import { filteredUsers, tasks, filteredDepartments } from './home.controller.js';
 
 class AdminController {
   async getRegister(req, res, next) {
@@ -85,7 +85,7 @@ class AdminController {
 
   async postAddLateness(req, res, next) {
     try {
-      const explanationLetter = req.file?.path;
+      const explanationLetter = req.file?.path || '';
       const { employeeId, lateDay, lateTime } = req.body;
       await adminService.addLateness(employeeId, req, res, lateDay, lateTime, explanationLetter);
     } catch (e) {
@@ -245,6 +245,20 @@ class AdminController {
       const workbook = await adminService.getUserExcel(filteredUsers);
       res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
       res.setHeader('Content-Disposition', `attachment; filename=Xodimlar.xlsx`);
+
+      return workbook.xlsx.write(res).then(() => {
+        res.status(200);
+      });
+    } catch (e) {
+      next(e);
+    }
+  }
+
+  async downloadByDepartments(req, res, next) {
+    try {
+      const workbook = await adminService.getExcelByDepartments(filteredDepartments);
+      res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+      res.setHeader('Content-Disposition', `attachment; filename=Bo\'limlar.xlsx`);
 
       return workbook.xlsx.write(res).then(() => {
         res.status(200);

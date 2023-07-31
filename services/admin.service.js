@@ -350,23 +350,6 @@ class AdminService {
         formatDate,
       );
     }
-    if (!explanationLetter) {
-      const errorMessage = 'Tushuntirish xati yuklanmadi';
-      const latenessId = '';
-      return renderLateness(
-        userId,
-        req,
-        res,
-        errorMessage,
-        true,
-        false,
-        lateDay,
-        lateTime,
-        explanationLetter,
-        latenessId,
-        formatDate,
-      );
-    }
     const highestExistingLatenessId = await req.db.lateness.max('id');
     const newLatenessId = highestExistingLatenessId ? highestExistingLatenessId + 1 : 1;
     await req.db.lateness.create({ id: newLatenessId, userId, lateDay, lateTime, explanationLetter });
@@ -463,7 +446,9 @@ class AdminService {
 
     const userId = latenessInfo.userId;
     await req.db.lateness.destroy({ where: { id } });
-    deleteFile(latenessInfo.explanationLetter);
+    if(latenessInfo.explanationLetter) {
+         deleteFile(latenessInfo.explanationLetter);
+    }
     res.redirect(`/admin/users/${userId}`);
   }
 
@@ -694,8 +679,9 @@ class AdminService {
       { header: 'Xodim', key: 'fullname', width: 10 },
       { header: 'Lavozimi', key: 'position', width: 10 },
       { header: 'Oy', key: 'dates', width: 10 },
-      { header: 'Kechikishlar soni', key: 'expiredTasks', width: 10 },
-      { header: "Muddati o'tgan xatlar", key: 'latenesses', width: 10 },
+      { header: 'Muddati o\'tgan xatlar', key: 'tasksInProcess', width: 10 },
+      { header: 'Muddat o\'tib bajarilgan', key: 'tasksFinished', width: 10 },
+      { header: "Kechikishlar soni", key: 'latenesses', width: 10 },
     ];
 
     let counter = 1;
@@ -707,8 +693,46 @@ class AdminService {
           fullname: user.fullname,
           position: user.position.name,
           dates: user.dates[0].date,
-          expiredTasks: user.expiredTasks.length,
+          tasksInProcess: user.tasksInProcess.length,
+          tasksFinished: user.tasksFinished.length,
           latenesses: user.latenesses.length,
+        };
+
+        worksheet.addRow(rowData); // Add data in worksheet
+        counter++;
+      });
+    }
+
+    // Making the first line in excel bold
+    worksheet.getRow(1).eachCell(cell => {
+      cell.font = { bold: true };
+    });
+
+    return workbook;
+  }
+
+  async getExcelByDepartments(filteredDepartments) {
+    const workbook = new excelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Bo\'limlar');
+    worksheet.columns = [
+      { header: '№', key: 'id', width: 10 },
+      { header: "Bo'lim", key: 'department', width: 10 },
+      { header: 'Oy', key: 'dates', width: 10 },
+      { header: 'Muddati o\'tgan xatlar', key: 'tasksInProcess', width: 10 },
+      { header: 'Muddat o\'tib bajarilgan', key: 'tasksFinished', width: 10 },
+      { header: "Kechikishlar soni", key: 'latenesses', width: 10 },
+    ];
+
+    let counter = 1;
+    if (filteredDepartments.length > 0) {
+      filteredDepartments[0].forEach(department => {
+        const rowData = {
+          id: counter,
+          department: department.department,
+          dates: department.dates[0].date,
+          tasksInProcess: department.tasksInProcess.length,
+          tasksFinished: department.tasksFinished.length,
+          latenesses: department.latenesses.length,
         };
 
         worksheet.addRow(rowData); // Add data in worksheet

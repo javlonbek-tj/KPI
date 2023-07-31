@@ -5,6 +5,7 @@ import { formatDate } from '../utils/formateDate.js';
 
 export let filteredUsers = [];
 export let tasks = [];
+export let filteredDepartments = [];
 
 class HomeController {
   async homePage(req, res, next) {
@@ -293,9 +294,6 @@ class HomeController {
           punishment: totalPunishment,
         };
       });
-      filteredUsers.pop();
-      filteredUsers.push(allEmployees);
-
 
 const groupedDepartments = {};
 
@@ -324,6 +322,8 @@ allEmployees.forEach(employee => {
 });
 
       const allGroupedDepartments = Object.values(groupedDepartments);
+       filteredDepartments.pop();
+      filteredDepartments.push(allGroupedDepartments);
       const paginatedGroupedDepartments = allGroupedDepartments.slice(offset, offset + limit);
       const isOverLimit = count > limit;
       return res.render('home2', {
