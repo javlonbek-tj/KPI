@@ -224,7 +224,7 @@ class HomeController {
         const toDate = to ? new Date(to) : null;
         whereClause = filtering(departmentId, fullname, fromDate, toDate);
       }
-      const { rows, count } = await users.findAndCountAll({
+      const { rows} = await users.findAndCountAll({
         where: whereClause,
         include: [
           { model: department },
@@ -324,6 +324,7 @@ allEmployees.forEach(employee => {
       const allGroupedDepartments = Object.values(groupedDepartments);
        filteredDepartments.pop();
       filteredDepartments.push(allGroupedDepartments);
+      const count = allGroupedDepartments.length;
       const paginatedGroupedDepartments = allGroupedDepartments.slice(offset, offset + limit);
       const isOverLimit = count > limit;
       return res.render('home2', {
