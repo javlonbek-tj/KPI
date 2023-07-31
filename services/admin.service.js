@@ -307,10 +307,18 @@ class AdminService {
       where: { id },
       include: [req.db.department, req.db.expiredTasks, req.db.lateness, req.db.position, req.db.date],
     });
-    function getExpiredTasks(employee, month) {
-      return employee.expiredTasks?.filter(task => new Date(task.date).getMonth() === month);
-    }
+   function getExpiredTasks(employee, month) {
+  const filteredExpiredTasks = employee.expiredTasks?.filter(task => new Date(task.date).getMonth() === month);
 
+  if (!filteredExpiredTasks) {
+    return [];
+  }
+
+  const tasksInProcess = filteredExpiredTasks.filter(task => task.status === 'Jarayonda');
+  const tasksFinished = filteredExpiredTasks.filter(task => task.status === 'Yakunlangan');
+
+  return { tasksInProcess, tasksFinished };
+}
     function getLateness(employee, month) {
       return employee.latenesses?.filter(late => new Date(late.lateDay).getMonth() === month);
     }
@@ -770,6 +778,41 @@ class AdminService {
           taskNumber: task.taskNumber,
           organization: task.organization,
           date: task.date,
+        };
+
+        worksheet.addRow(rowData); // Add data in worksheet
+        counter++;
+      });
+    }
+
+    // Making the first line in excel bold
+    worksheet.getRow(1).eachCell(cell => {
+      cell.font = { bold: true };
+    });
+
+    return workbook;
+  }
+
+  async getLatenessExcel(filteredLateness) {
+    const workbook = new excelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Kechikishlar');
+    worksheet.columns = [
+      { header: '№', key: 'id', width: 10 },
+      { header: "Bo'lim", key: 'department', width: 10 },
+      { header: 'Xodim', key: 'fullname', width: 10 },
+      { header: 'Kechikish sanasi', key: 'lateDay', width: 10 },
+      { header: 'Kechikish vaqti(minut)', key: 'lateTime', width: 10 },
+    ];
+
+    let counter = 1;
+    if (filteredLateness.length > 0) {
+      filteredLateness[0].forEach(lateness => {
+        const rowData = {
+          id: counter,
+          department: lateness.user.department.name,
+          fullname: lateness.user.fullname,
+          lateDay: lateness.lateDay,
+          lateTime: lateness.lateTime,
         };
 
         worksheet.addRow(rowData); // Add data in worksheet

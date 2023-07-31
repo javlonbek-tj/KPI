@@ -1,15 +1,20 @@
 <%- include('./includes/head.ejs') %>
 
 <div class="container-fluid px-4">
-  <div class="row my-2">
-    <div class="col-3">
+  <div class="row my-2 me-3 d-flex align-items-center mb-3">
+    <div class="col-md-3 align-items-center">
       <input
         type="text"
         id="latenessFilter"
-        class="form-control mb-3 fixed-header"
+        class="form-control fixed-header"
         placeholder="Bo'lim nomi bo'yicha qidirish"
       />
     </div>
+    <div class="col-md-1">
+    <div class="filtering">
+      <a href="/admin/latenessExcel">Excel</a>
+    </div>
+  </div>
   </div>
   <div class="row">
     <div class="col">
@@ -26,7 +31,7 @@
             </tr>
           </thead>
           <tbody>
-            <% latenesses.forEach((late, index) => { 
+            <% latenesses.forEach((late, index) => {  
               const formatedDate = formatDate(late.lateDay);
             %>
             <tr>
@@ -42,7 +47,6 @@
                 <p>Taqdim etilmadi</p>
               <% } %>
             </td>
-
             </tr>
             <% }); %>
           </tbody>

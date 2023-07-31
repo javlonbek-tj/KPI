@@ -1,5 +1,6 @@
 import adminService from '../services/admin.service.js';
-import { filteredUsers, tasks, filteredDepartments } from './home.controller.js';
+import { filteredUsers, tasks, filteredDepartments, filteredLatenesses } from './home.controller.js';
+
 
 class AdminController {
   async getRegister(req, res, next) {
@@ -272,6 +273,20 @@ class AdminController {
       const workbook = await adminService.getExpiredTasksExcel(tasks);
       res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
       res.setHeader('Content-Disposition', `attachment; filename=Xatlar.xlsx`);
+
+      return workbook.xlsx.write(res).then(() => {
+        res.status(200);
+      });
+    } catch (e) {
+      next(e);
+    }
+  }
+
+  async downloadLatenessExcel(req, res, next) {
+    try {
+      const workbook = await adminService.getLatenessExcel(filteredLatenesses);
+      res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+      res.setHeader('Content-Disposition', `attachment; filename=Kechikishlar.xlsx`);
 
       return workbook.xlsx.write(res).then(() => {
         res.status(200);

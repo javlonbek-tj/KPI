@@ -6,6 +6,7 @@ import { formatDate } from '../utils/formateDate.js';
 export let filteredUsers = [];
 export let tasks = [];
 export let filteredDepartments = [];
+export let filteredLatenesses = [];
 
 class HomeController {
   async homePage(req, res, next) {
@@ -173,6 +174,8 @@ class HomeController {
           const lateDate = new Date(late.lateDay);
         return lateDate.getMonth() === currentMonth;
       });
+      filteredLatenesses.pop();
+      filteredLatenesses.push(filteredLateness);
       return res.render('latenesses', {
         pageTitle: `Kechikishlar`,
         latenesses: filteredLateness,
@@ -304,6 +307,7 @@ allEmployees.forEach(employee => {
     if (!groupedDepartments[department.name]) {
       groupedDepartments[department.name] = {
         department: department.name,
+        departmentId: department.id,
         employees: [],
         tasksInProcess: [],
         tasksFinished: [],
@@ -320,7 +324,6 @@ allEmployees.forEach(employee => {
     groupedDepartments[department.name].latenesses.push(...employee.latenesses);
   }
 });
-
       const allGroupedDepartments = Object.values(groupedDepartments);
        filteredDepartments.pop();
       filteredDepartments.push(allGroupedDepartments);

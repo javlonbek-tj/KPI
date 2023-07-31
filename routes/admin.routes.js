@@ -126,5 +126,6 @@ adminRoutes.post(
 adminRoutes.get('/excel', isAuth, adminController.downloadExcel);
 adminRoutes.get('/excelByDepartments', isAuth, adminController.downloadByDepartments);
 adminRoutes.get('/expiredTasksExcel', isAuth, adminController.downloadTasksExcel);
+adminRoutes.get('/latenessExcel', isAuth, adminController.downloadLatenessExcel);
 
 export default adminRoutes;

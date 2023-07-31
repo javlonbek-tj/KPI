@@ -161,9 +161,9 @@
   <tr class="align-middle">
     <td class="text-center"><%= groupedDepartment.department %></td>
     <td class="text-center"><%=  groupedDepartment.dates[groupedDepartment.dates.length - 1]?.date%></td>
-    <td class="text-center"><%= groupedDepartment.tasksInProcess.length %></td>
-    <td class="text-center"><%= groupedDepartment.tasksFinished.length %></td>
-    <td class="text-center"><%= groupedDepartment.latenesses.length %></td>
+    <td class="text-center <%= ((groupedDepartment.departmentId != user.departmentId && user.role === 'user') || (user.role === 'kadr')) ? 'blur-effect' : '' %>"><%= groupedDepartment.tasksInProcess.length %></td>
+    <td class="text-center <%= ((groupedDepartment.departmentId != user.departmentId && user.role === 'user') || (user.role === 'kadr')) ? 'blur-effect' : '' %>"><%= groupedDepartment.tasksFinished.length %></td>
+    <td class="text-center <%= ((groupedDepartment.departmentId != user.departmentId && user.role === 'user') || (user.role === 'ijro')) ? 'blur-effect' : '' %>"><%= groupedDepartment.latenesses.length %></td>
   </tr>
 <% } %>
 

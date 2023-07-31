@@ -32,27 +32,36 @@
               <th class="align-middle text-center">Oy</th>
               <th class="align-middle text-center">Kechikishlar soni</th>
               <th class="align-middle text-center">Muddati o'tgan xatlar</th>
+              <th class="align-middle text-center">Muddati o'tib bajarilgan xatlar</th>
             </tr>
           </thead>
           <tbody>
-            <% employee.dates.forEach(date => { const month = getMonth(date.date); const expiredTasks =
+            <% employee.dates.forEach(date => { const month = getMonth(date.date); const {tasksInProcess, tasksFinished} =
             getExpiredTasks(employee, new Date(date.date).getMonth()); const lateness = getLateness(employee,
-            new Date(date.date).getMonth()); %>
+            new Date(date.date).getMonth());%>
 
             <tr>
               <td class="text-center"><%= month %></td>
               <td class="text-center">
                 <%= lateness.length%>
-                <% if(user?.role !== 'ijro' && user?.role !== 'user') { %>
+                <% if(user?.role !== 'ijro' || user?.id != lateness[0].userId) { %>
                 <a href="#" data-bs-toggle="modal" data-bs-target="#latenessModal-<%= date.id %>">
                   <i class="fa-solid fa-eye"></i>
                 </a>
                 <% } %>
               </td>
               <td class="text-center">
-                <%= expiredTasks.length %>
-                <% if(user?.role !== 'kadr' && user?.role !== 'user') { %>
-                <a href="#" data-bs-toggle="modal" data-bs-target="#expiredTasksModal-<%= date.id %>"
+                <%= tasksInProcess.length %>
+                <% if(user?.role !== 'kadr' || user?.id != tasksInProcess[0].userId) { %>
+                <a href="#" data-bs-toggle="modal" data-bs-target="#tasksInProcessModal-<%= date.id %>"
+                  ><i class="fa-solid fa-eye"></i
+                ></a>
+                <% } %>
+              </td>
+              <td class="text-center">
+                <%= tasksFinished.length %>
+                <% if(user?.role !== 'kadr' || user?.id != tasksFinished[0].userId) { %>
+                <a href="#" data-bs-toggle="modal" data-bs-target="#tasksFinishedModal-<%= date.id %>"
                   ><i class="fa-solid fa-eye"></i
                 ></a>
                 <% } %>
@@ -111,15 +120,15 @@
             <!-- ExpiredTasks Modal -->
             <div
               class="modal fade"
-              id="expiredTasksModal-<%= date.id %>"
+              id="tasksInProcessModal-<%= date.id %>"
               tabindex="-1"
-              aria-labelledby="expiredTasksModalLabel-<%= date.id %>"
+              aria-labelledby="tasksInProcessModalLabel-<%= date.id %>"
               aria-hidden="true"
             >
               <div class="modal-dialog">
                 <div class="modal-content">
                   <div class="modal-header">
-                    <h5 class="modal-title" id="expiredTasksModalLabel-<%= date.id %>">
+                    <h5 class="modal-title" id="tasksInProcessModalLabel-<%= date.id %>">
                       Muddati o'tgan xatlar ma'lumotlari
                     </h5>
                     <button
@@ -130,7 +139,7 @@
                     ></button>
                   </div>
                   <div class="modal-body">
-                    <% expiredTasks.forEach((task, index) => { const formattedDate = formatDate(task.date); %>
+                    <% tasksInProcess.forEach((task, index) => { const formattedDate = formatDate(task.date); %>
                     <p><strong>Hujjat raqami:</strong> <%= task.taskNumber %></p>
                     <p><strong>Qaysi tashkilotdan:</strong> <%= task.organization %></p>
                     <p><strong>Sanasi:</strong> <%= formattedDate %></p>
@@ -146,7 +155,53 @@
                         <button class="btn btn-danger">O'chirish</button>
                       </form>
                     </div>
-                    <% } %> <% if (index !== expiredTasks.length - 1) { %>
+                    <% } %> <% if (index !== tasksInProcess.length - 1) { %>
+                    <hr class="my-4" />
+                    <% } %> <% }) %>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Finished ExpiredTasks Modal -->
+            <div
+              class="modal fade"
+              id="tasksFinishedModal-<%= date.id %>"
+              tabindex="-1"
+              aria-labelledby="tasksFinishedModalLabel-<%= date.id %>"
+              aria-hidden="true"
+            >
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="tasksFinishedModalLabel-<%= date.id %>">
+                      Muddati o'tib bajarilgan xatlar
+                    </h5>
+                    <button
+                      type="button"
+                      class="btn-close"
+                      data-bs-dismiss="modal"
+                      aria-label="Close"
+                    ></button>
+                  </div>
+                  <div class="modal-body">
+                    <% tasksFinished.forEach((task, index) => { const formattedDate = formatDate(task.date); %>
+                    <p><strong>Hujjat raqami:</strong> <%= task.taskNumber %></p>
+                    <p><strong>Qaysi tashkilotdan:</strong> <%= task.organization %></p>
+                    <p><strong>Sanasi:</strong> <%= formattedDate %></p>
+                     <% if(user?.role === 'admin' || user?.role === 'superAdmin' || user?.role === 'ijro') { %>
+                    <div class="d-flex justify-content-around expiredInfo">
+                      <a
+                        href="/admin/updateExpiredTask/<%= task.id%>-<%=employee.id%>"
+                        class="btn btn-primary"
+                        >Yangilash</a
+                      >
+                      <form action="/admin/expirationLetter" method="POST">
+                        <input type="hidden" value="<%= task.id%>" name="taskId" />
+                        <button class="btn btn-danger">O'chirish</button>
+                      </form>
+                    </div>
+                    <% } %> <% if (index !== tasksFinished.length - 1) { %>
                     <hr class="my-4" />
                     <% } %> <% }) %>
                   </div>
