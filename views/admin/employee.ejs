@@ -83,8 +83,13 @@
                     <p><strong>Sana:</strong> <%= formatedDate %></p>
                     <p><strong>Kechikish vaqti:</strong> <%= late.lateTime %> minut</p>
                     <p>
-                      <strong>Tushuntirish xati:</strong> <a href="/<%= late.explanationLetter%>"> Ko'rish</a>
-                    </p>
+                    <strong>Tushuntirish xati:</strong>
+                    <% if (late.explanationLetter) { %>
+                      <a href="/<%= late.explanationLetter %>">Ko'rish</a>
+                    <% } else { %>
+                      <span>Taqdim etilmadi</span>
+                    <% } %>
+                  </p>
                     <% if(user?.role === 'admin' || user?.role === 'superAdmin' || user?.role === 'kadr') { %>
                     <div class="d-flex justify-content-around expiredInfo">
                       <a href="/admin/updateLateness/<%= late.id%>-<%= employee.id%>" class="btn btn-primary"

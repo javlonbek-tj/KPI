@@ -317,7 +317,7 @@ allEmployees.forEach(employee => {
 
     groupedDepartments[department.name].employees.push(employee);
     groupedDepartments[department.name].dates.push(...employee.dates);
-    groupedDepartments[department.name].dates.push(...employee.latenesses);
+    groupedDepartments[department.name].latenesses.push(...employee.latenesses);
   }
 });
 
