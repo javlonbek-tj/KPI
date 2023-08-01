@@ -72,17 +72,22 @@ class HomeController {
         const expiredTasksPunishment = expiredTasksCount;
 
         // Calculate punishment based on lateness entries for the current month
-        const latenessPunishment = employee.latenesses.reduce((totalPunishment, late) => {
+        const latenessByDate = employee.latenesses.filter(late => {
           const lateDate = new Date(late.lateDay);
-          const lateMonth = lateDate.getMonth();
-          if (
-            (!fromDate || lateDate >= fromDate) &&
-            (!toDate || (lateDate <= toDate && (fromDate || toDate || lateMonth == currentMonth)))
-          ) {
-            return totalPunishment + parseInt(late.lateTime) * 0.5;
+          let time;
+          if (fromDate && toDate) {
+            time = lateDate >= fromDate && lateDate <= toDate;
+          } else if (fromDate) {
+            return lateDate >= fromDate;
+          } else if (toDate) {
+            return lateDate <= toDate;
           } else {
-            return totalPunishment;
+            return lateDate.getMonth() === currentMonth;
           }
+        });
+
+        const latenessPunishment = latenessByDate.reduce((totalPunishment, late) => {
+          return totalPunishment + parseInt(late.lateTime) * 0.5;
         }, 0);
 
         // Total punishment for the user
@@ -124,6 +129,8 @@ class HomeController {
           tasksFinished,
           latenesses: filteredLateness,
           punishment: totalPunishment,
+          from,
+          to,
         };
       });
 
@@ -191,9 +198,20 @@ class HomeController {
       const latenesses = await req.db.lateness.findAll({
         include: [{ model: req.db.users, include: req.db.department }],
       });
+      const { from, to } = req.query;
+      const fromDate = from ? new Date(from) : null;
+      const toDate = to ? new Date(to) : null;
       const filteredLateness = latenesses.filter(late => {
         const lateDate = new Date(late.lateDay);
-        return lateDate.getMonth() === currentMonth;
+        if (fromDate && toDate) {
+          return lateDate >= fromDate && lateDate <= toDate;
+        } else if (fromDate) {
+          return lateDate >= fromDate;
+        } else if (toDate) {
+          return lateDate <= toDate;
+        } else {
+          return lateDate.getMonth() === currentMonth;
+        }
       });
       filteredLatenesses.pop();
       filteredLatenesses.push(filteredLateness);
@@ -213,9 +231,20 @@ class HomeController {
       const expiredTasks = await req.db.expiredTasks.findAll({
         include: [{ model: req.db.users, include: req.db.department }],
       });
+      const { from, to } = req.query;
+      const fromDate = from ? new Date(from) : null;
+      const toDate = to ? new Date(to) : null;
       const filteredExpiredTasks = expiredTasks.filter(task => {
         const taskDate = new Date(task.date);
-        return taskDate.getMonth() === currentMonth;
+        if (fromDate && toDate) {
+          return taskDate >= fromDate && taskDate <= toDate;
+        } else if (fromDate) {
+          return taskDate >= fromDate;
+        } else if (toDate) {
+          return taskDate <= toDate;
+        } else {
+          return taskDate.getMonth() === currentMonth;
+        }
       });
       const currentExpiredTasks = filteredExpiredTasks.filter(task => task.status === 'Jarayonda');
       tasks.pop();
@@ -247,6 +276,19 @@ class HomeController {
         const fromDate = from ? new Date(from) : null;
         const toDate = to ? new Date(to) : null;
         whereClause = filtering(departmentId, fullname, fromDate, toDate);
+      } else {
+        const currentDate = new Date();
+        const currentMonth = currentDate.getMonth();
+        const currentYear = currentDate.getFullYear();
+
+        whereClause = {
+          '$dates.date$': {
+            [Op.and]: [
+              { [Op.gte]: new Date(currentYear, currentMonth, 1) },
+              { [Op.lte]: new Date(currentYear, currentMonth + 1, 0) },
+            ],
+          },
+        };
       }
       const { rows } = await users.findAndCountAll({
         where: whereClause,
@@ -271,11 +313,25 @@ class HomeController {
         const expiredTasksCount = employee.expiredTasks.length;
         const expiredTasksPunishment = expiredTasksCount;
 
-        // Calculate punishment based on lateness entries
-        const latenessPunishment = employee.latenesses.reduce(
-          (totalPunishment, late) => totalPunishment + parseInt(late.lateTime) * 0.5,
-          0,
-        );
+        // Calculate punishment based on lateness entries for the current month
+        const latenessByDate = employee.latenesses.filter(late => {
+          const lateDate = new Date(late.lateDay);
+          let time;
+          if (fromDate && toDate) {
+            time = lateDate >= fromDate && lateDate <= toDate;
+          } else if (fromDate) {
+            return lateDate >= fromDate;
+          } else if (toDate) {
+            return lateDate <= toDate;
+          } else {
+            return lateDate.getMonth() === currentMonth;
+          }
+        });
+
+        const latenessPunishment = latenessByDate.reduce((totalPunishment, late) => {
+          return totalPunishment + parseInt(late.lateTime) * 0.5;
+        }, 0);
+
         // Total punishment for the user
         const totalPunishment = expiredTasksPunishment + latenessPunishment;
 
@@ -307,6 +363,7 @@ class HomeController {
             return lateDate.getMonth() === currentMonth;
           }
         });
+
         return {
           ...employee.toJSON(),
           dates: formattedDates,
@@ -314,6 +371,8 @@ class HomeController {
           tasksFinished,
           latenesses: filteredLateness,
           punishment: totalPunishment,
+          from,
+          to,
         };
       });
 

@@ -57,21 +57,29 @@
 
                     <div class="col-md stats-item">
                   <% let overallExpiredTasks = 0; %>
-                  <% let currentMonth = 'Joriy'; %>
+                  <% let currentMonth; %>
+                  <% const isAdminOrIjro = ['admin', 'superAdmin', 'ijro'].includes(user?.role); %>
                   <% for (let employee of allEmployees) { %>
                     <% if (employee.dates && employee.dates.length > 0) { %>
-                      <% currentMonth = (employee.dates[employee.dates.length - 1]?.date).split(' ')[3]; %>
+                      <% if (employee.from && employee.to) { %>
+                        <% currentMonth = `${employee.from} - ${employee.to}`; %>
+                      <% } else if (employee.from) { %>
+                        <% currentMonth = `${employee.from} dan hozirgacha`; %>
+                      <% } else if (employee.to) { %>
+                        <% currentMonth = `${employee.to} gacha`; %>
+                      <% } else { %>
+                        <% currentMonth = (employee.dates[employee.dates.length - 1]?.date).split(' ')[3]; %>
+                      <% } %>
                     <% } %>
                     <% overallExpiredTasks += employee.tasksInProcess.length; %>
-                  <% } %>
-                  <% const isAdminOrIjro = ['admin', 'superAdmin', 'ijro'].includes(user?.role); %>
                   <% if (isAdminOrIjro) { %>
-                    <a href="/expiredTasks">
+                    <a href="/expiredTasks?from=<%= employee.from %>&to=<%= employee.to %>">
+                  <% } %>
                   <% } %>
                   <div class="p-3 h-100 bg-white shadow-sm d-flex justify-content-around align-items-center rounded">
                     <div class="stats text-secondary">
                       <h3><%= overallExpiredTasks %></h3>
-                      <p class="fw-bold"><%= currentMonth %> oyi muddat buzilishlar</p>
+                      <p class="fw-bold"><%= currentMonth %> muddat buzilishlar</p>
                     </div>
                     <i class="fa-solid fa-envelope fs-5 primary-text border rounded-full secondary-bg p-3"></i>
                   </div>
@@ -81,18 +89,19 @@
                 </div>
 
 
+
                     <div class="col-md stats-item">
                     <% let overallLatenesses = 0; %>
                     <% for (let employee of allEmployees) { %>
                       <% overallLatenesses += employee.latenesses.length; %>
-                    <% } %>
                     <% if (isAdminOrKadr) { %>
-                      <a href="/latenesses">
+                      <a href="/latenesses?from<%= employee.from%>&to=<%= employee.to %>">
+                    <% } %>
                     <% } %> 
                     <div class="p-3 h-100 bg-white shadow-sm d-flex justify-content-around align-items-center rounded">
                       <div class="stats text-secondary">
                         <h3><%= overallLatenesses %></h3>
-                        <p class="fw-bold"><%= currentMonth %> oy kechikishlar</p>
+                        <p class="fw-bold"><%= currentMonth %> kechikishlar</p>
                       </div>
                       <i class="fa-solid fa-clock fs-5 primary-text border rounded-full secondary-bg p-3"></i>
                     </div>
