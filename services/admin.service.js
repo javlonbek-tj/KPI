@@ -237,7 +237,7 @@ class AdminService {
       resume
     });
     const highestExistingDateId = await req.db.date.max('id');
-    const newDateId = highestExistingDateId + 1;
+    const newDateId = highestExistingDateId ? highestExistingDateId + 1 : 1;
     await req.db.date.create({
       id: newDateId,
       date: new Date().toLocaleString('en-US', { timeZone: 'Asia/Ashgabat' }),

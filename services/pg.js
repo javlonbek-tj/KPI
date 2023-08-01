@@ -10,10 +10,10 @@ import LatenessModel from '../models/lateness.model.js';
 
 dotenv.config();
 
-/* const isProduction = process.env.NODE_ENV === 'production';
-const isDevelopment = process.env.NODE_ENV === 'development';
+/* const isProduction = process.env.NODE_ENV === 'production'; */
 
-const sequelize = new Sequelize(
+
+/* const sequelize = new Sequelize(
   isProduction ? process.env.DB_NAME : process.env.DB_NAME_DEV,
   isProduction ? process.env.DB_USER : process.env.DB_USER_DEV,
   isProduction ? process.env.DB_PASSWORD : process.env.DB_PASSWORD_DEV,
