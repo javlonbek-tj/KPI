@@ -34,6 +34,19 @@ class HomeController {
         const fromDate = from ? new Date(from) : null;
         const toDate = to ? new Date(to) : null;
         whereClause = filtering(departmentId, fullname, fromDate, toDate);
+      } else {
+        const currentDate = new Date();
+        const currentMonth = currentDate.getMonth();
+        const currentYear = currentDate.getFullYear();
+
+        whereClause = {
+          '$dates.date$': {
+            [Op.and]: [
+              { [Op.gte]: new Date(currentYear, currentMonth, 1) },
+              { [Op.lte]: new Date(currentYear, currentMonth + 1, 0) },
+            ],
+          },
+        };
       }
       const { rows, count } = await users.findAndCountAll({
         where: whereClause,
@@ -58,12 +71,20 @@ class HomeController {
         const expiredTasksCount = employee.expiredTasks.length;
         const expiredTasksPunishment = expiredTasksCount;
 
-     
-        // Calculate punishment based on lateness entries
-        const latenessPunishment = employee.latenesses.reduce(
-          (totalPunishment, late) => totalPunishment + parseInt(late.lateTime) * 0.5,
-          0,
-        );
+        // Calculate punishment based on lateness entries for the current month
+        const latenessPunishment = employee.latenesses.reduce((totalPunishment, late) => {
+          const lateDate = new Date(late.lateDay);
+          const lateMonth = lateDate.getMonth();
+          if (
+            (!fromDate || lateDate >= fromDate) &&
+            (!toDate || (lateDate <= toDate && (fromDate || toDate || lateMonth == currentMonth)))
+          ) {
+            return totalPunishment + parseInt(late.lateTime) * 0.5;
+          } else {
+            return totalPunishment;
+          }
+        }, 0);
+
         // Total punishment for the user
         const totalPunishment = expiredTasksPunishment + latenessPunishment;
 
@@ -79,10 +100,9 @@ class HomeController {
             return taskDate.getMonth() === currentMonth;
           }
         });
-      
-      const tasksInProcess = filteredExpiredTasks.filter(task => task.status === 'Jarayonda');
-        const tasksFinished = filteredExpiredTasks.filter(task => task.status === 'Yakunlangan');
 
+        const tasksInProcess = filteredExpiredTasks.filter(task => task.status === 'Jarayonda');
+        const tasksFinished = filteredExpiredTasks.filter(task => task.status === 'Yakunlangan');
 
         const filteredLateness = employee.latenesses.filter(late => {
           const lateDate = new Date(late.lateDay);
@@ -96,6 +116,7 @@ class HomeController {
             return lateDate.getMonth() === currentMonth;
           }
         });
+
         return {
           ...employee.toJSON(),
           dates: formattedDates,
@@ -105,9 +126,9 @@ class HomeController {
           punishment: totalPunishment,
         };
       });
+
       filteredUsers.pop();
       filteredUsers.push(allEmployees);
-
 
       const paginatedEmployees = allEmployees.slice(offset, offset + limit);
       const isOverLimit = count > limit;
@@ -126,7 +147,7 @@ class HomeController {
         total: count,
         limit,
         query: req.query,
-        allEmployees
+        allEmployees,
       });
     } catch (e) {
       next(e);
@@ -168,10 +189,10 @@ class HomeController {
     try {
       const currentMonth = new Date().getMonth();
       const latenesses = await req.db.lateness.findAll({
-        include: [{model: req.db.users, include: req.db.department}]
+        include: [{ model: req.db.users, include: req.db.department }],
       });
       const filteredLateness = latenesses.filter(late => {
-          const lateDate = new Date(late.lateDay);
+        const lateDate = new Date(late.lateDay);
         return lateDate.getMonth() === currentMonth;
       });
       filteredLatenesses.pop();
@@ -179,21 +200,21 @@ class HomeController {
       return res.render('latenesses', {
         pageTitle: `Kechikishlar`,
         latenesses: filteredLateness,
-        formatDate
+        formatDate,
       });
     } catch (e) {
       next(e);
     }
   }
 
-    async getExpiredTasks(req, res, next) {
+  async getExpiredTasks(req, res, next) {
     try {
       const currentMonth = new Date().getMonth();
       const expiredTasks = await req.db.expiredTasks.findAll({
-        include: [{model: req.db.users, include: req.db.department}]
+        include: [{ model: req.db.users, include: req.db.department }],
       });
       const filteredExpiredTasks = expiredTasks.filter(task => {
-          const taskDate = new Date(task.date);
+        const taskDate = new Date(task.date);
         return taskDate.getMonth() === currentMonth;
       });
       const currentExpiredTasks = filteredExpiredTasks.filter(task => task.status === 'Jarayonda');
@@ -202,7 +223,7 @@ class HomeController {
       return res.render('expiredTasks', {
         pageTitle: `Muddat buzilishlar`,
         expiredTasks: currentExpiredTasks,
-        formatDate
+        formatDate,
       });
     } catch (e) {
       next(e);
@@ -217,17 +238,17 @@ class HomeController {
 
       const page = parseInt(req.query.page) || 1;
       const limit = 13;
-      const {departmentId, fullname, from, to } = req.query;
+      const { departmentId, fullname, from, to } = req.query;
       const offset = (Math.abs(page) - 1) * Math.abs(limit);
 
       let whereClause = {};
 
-    if (departmentId || fullname || from || to) {
+      if (departmentId || fullname || from || to) {
         const fromDate = from ? new Date(from) : null;
         const toDate = to ? new Date(to) : null;
         whereClause = filtering(departmentId, fullname, fromDate, toDate);
       }
-      const { rows} = await users.findAndCountAll({
+      const { rows } = await users.findAndCountAll({
         where: whereClause,
         include: [
           { model: department },
@@ -250,7 +271,6 @@ class HomeController {
         const expiredTasksCount = employee.expiredTasks.length;
         const expiredTasksPunishment = expiredTasksCount;
 
-     
         // Calculate punishment based on lateness entries
         const latenessPunishment = employee.latenesses.reduce(
           (totalPunishment, late) => totalPunishment + parseInt(late.lateTime) * 0.5,
@@ -271,10 +291,9 @@ class HomeController {
             return taskDate.getMonth() === currentMonth;
           }
         });
-      
-      const tasksInProcess = filteredExpiredTasks.filter(task => task.status === 'Jarayonda');
-        const tasksFinished = filteredExpiredTasks.filter(task => task.status === 'Yakunlangan');
 
+        const tasksInProcess = filteredExpiredTasks.filter(task => task.status === 'Jarayonda');
+        const tasksFinished = filteredExpiredTasks.filter(task => task.status === 'Yakunlangan');
 
         const filteredLateness = employee.latenesses.filter(late => {
           const lateDate = new Date(late.lateDay);
@@ -298,34 +317,34 @@ class HomeController {
         };
       });
 
-const groupedDepartments = {};
+      const groupedDepartments = {};
 
-allEmployees.forEach(employee => {
-  const { department } = employee;
+      allEmployees.forEach(employee => {
+        const { department } = employee;
 
-  if (department && department.name) {
-    if (!groupedDepartments[department.name]) {
-      groupedDepartments[department.name] = {
-        department: department.name,
-        departmentId: department.id,
-        employees: [],
-        tasksInProcess: [],
-        tasksFinished: [],
-        latenesses: [],
-        dates: []
-      };
-    }
+        if (department && department.name) {
+          if (!groupedDepartments[department.name]) {
+            groupedDepartments[department.name] = {
+              department: department.name,
+              departmentId: department.id,
+              employees: [],
+              tasksInProcess: [],
+              tasksFinished: [],
+              latenesses: [],
+              dates: [],
+            };
+          }
 
-    groupedDepartments[department.name].tasksInProcess.push(...employee.tasksInProcess);
-    groupedDepartments[department.name].tasksFinished.push(...employee.tasksFinished);
+          groupedDepartments[department.name].tasksInProcess.push(...employee.tasksInProcess);
+          groupedDepartments[department.name].tasksFinished.push(...employee.tasksFinished);
 
-    groupedDepartments[department.name].employees.push(employee);
-    groupedDepartments[department.name].dates.push(...employee.dates);
-    groupedDepartments[department.name].latenesses.push(...employee.latenesses);
-  }
-});
+          groupedDepartments[department.name].employees.push(employee);
+          groupedDepartments[department.name].dates.push(...employee.dates);
+          groupedDepartments[department.name].latenesses.push(...employee.latenesses);
+        }
+      });
       const allGroupedDepartments = Object.values(groupedDepartments);
-       filteredDepartments.pop();
+      filteredDepartments.pop();
       filteredDepartments.push(allGroupedDepartments);
       const count = allGroupedDepartments.length;
       const paginatedGroupedDepartments = allGroupedDepartments.slice(offset, offset + limit);
@@ -345,7 +364,7 @@ allEmployees.forEach(employee => {
         limit,
         query: req.query,
         allEmployees,
-        groupedDepartments: paginatedGroupedDepartments
+        groupedDepartments: paginatedGroupedDepartments,
       });
     } catch (e) {
       next(e);

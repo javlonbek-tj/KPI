@@ -15,14 +15,12 @@
           <h3><%= employee.fullname %></h3>
           <p><strong>Bo'lim:</strong> <%= employee.department.name %></p>
           <p><strong>Lavozimi:</strong> <%= employee.position.name %></p>
-          <% if(user?.role === 'admin' || user?.role === 'superAdmin' || user?.role === 'kadr') { %>
-           <% if(employee?.role !== 'superAdmin' || user?.role === 'superAdmin') { %> 
+          <% if(user?.role === 'admin' || user?.role === 'superAdmin' || user?.role === 'kadr') { %> <%
+          if(employee?.role !== 'superAdmin' || user?.role === 'superAdmin') { %>
           <a href="/admin/updateEmployee/<%= employee.id%>" class="btn btn-primary me-3">Yangilash</a>
           <% if (employee.resume) { %>
-           <a href="/<%= employee.resume %>" class="btn btn-success">Rezyume</a>
-           <% } %>
-          <% } %>
-          <% } %>
+          <a href="/<%= employee.resume %>" class="btn btn-success">Rezyume</a>
+          <% } %> <% } %> <% } %>
         </div>
       </div>
       <div class="attendance-list">
@@ -36,31 +34,30 @@
             </tr>
           </thead>
           <tbody>
-            <% employee.dates.forEach(date => { const month = getMonth(date.date); const {tasksInProcess, tasksFinished} =
-            getExpiredTasks(employee, new Date(date.date).getMonth()); const lateness = getLateness(employee,
-            new Date(date.date).getMonth());%>
+            <% employee.dates.forEach(date => { const month = getMonth(date.date); const {tasksInProcess,
+            tasksFinished} = getExpiredTasks(employee, new Date(date.date).getMonth()); const lateness =
+            getLateness(employee, new Date(date.date).getMonth());%>
 
             <tr>
               <td class="text-center"><%= month %></td>
               <td class="text-center">
-                <%= lateness.length%>
-                <% if(user?.role !== 'ijro' || user?.id != lateness[0].userId) { %>
+                <%= lateness.length%> <% if(user?.role !== 'ijro' || user?.id != lateness[0]?.userId) { %>
                 <a href="#" data-bs-toggle="modal" data-bs-target="#latenessModal-<%= date.id %>">
                   <i class="fa-solid fa-eye"></i>
                 </a>
                 <% } %>
               </td>
               <td class="text-center">
-                <%= tasksInProcess.length %>
-                <% if(user?.role !== 'kadr' || user?.id != tasksInProcess[0].userId) { %>
+                <%= tasksInProcess.length %> <% if(user?.role !== 'kadr' || user?.id !=
+                tasksInProcess[0]?.userId) { %>
                 <a href="#" data-bs-toggle="modal" data-bs-target="#tasksInProcessModal-<%= date.id %>"
                   ><i class="fa-solid fa-eye"></i
                 ></a>
                 <% } %>
               </td>
               <td class="text-center">
-                <%= tasksFinished.length %>
-                <% if(user?.role !== 'kadr' || user?.id != tasksFinished[0].userId) { %>
+                <%= tasksFinished.length %> <% if(user?.role !== 'kadr' || user?.id !=
+                tasksFinished[0]?.userId) { %>
                 <a href="#" data-bs-toggle="modal" data-bs-target="#tasksFinishedModal-<%= date.id %>"
                   ><i class="fa-solid fa-eye"></i
                 ></a>
@@ -92,13 +89,13 @@
                     <p><strong>Sana:</strong> <%= formatedDate %></p>
                     <p><strong>Kechikish vaqti:</strong> <%= late.lateTime %> minut</p>
                     <p>
-                    <strong>Tushuntirish xati:</strong>
-                    <% if (late.explanationLetter) { %>
+                      <strong>Tushuntirish xati:</strong>
+                      <% if (late.explanationLetter) { %>
                       <a href="/<%= late.explanationLetter %>">Ko'rish</a>
-                    <% } else { %>
+                      <% } else { %>
                       <span>Taqdim etilmadi</span>
-                    <% } %>
-                  </p>
+                      <% } %>
+                    </p>
                     <% if(user?.role === 'admin' || user?.role === 'superAdmin' || user?.role === 'kadr') { %>
                     <div class="d-flex justify-content-around expiredInfo">
                       <a href="/admin/updateLateness/<%= late.id%>-<%= employee.id%>" class="btn btn-primary"
@@ -139,11 +136,12 @@
                     ></button>
                   </div>
                   <div class="modal-body">
-                    <% tasksInProcess.forEach((task, index) => { const formattedDate = formatDate(task.date); %>
+                    <% tasksInProcess.forEach((task, index) => { const formattedDate = formatDate(task.date);
+                    %>
                     <p><strong>Hujjat raqami:</strong> <%= task.taskNumber %></p>
                     <p><strong>Qaysi tashkilotdan:</strong> <%= task.organization %></p>
                     <p><strong>Sanasi:</strong> <%= formattedDate %></p>
-                     <% if(user?.role === 'admin' || user?.role === 'superAdmin' || user?.role === 'ijro') { %>
+                    <% if(user?.role === 'admin' || user?.role === 'superAdmin' || user?.role === 'ijro') { %>
                     <div class="d-flex justify-content-around expiredInfo">
                       <a
                         href="/admin/updateExpiredTask/<%= task.id%>-<%=employee.id%>"
@@ -185,11 +183,12 @@
                     ></button>
                   </div>
                   <div class="modal-body">
-                    <% tasksFinished.forEach((task, index) => { const formattedDate = formatDate(task.date); %>
+                    <% tasksFinished.forEach((task, index) => { const formattedDate = formatDate(task.date);
+                    %>
                     <p><strong>Hujjat raqami:</strong> <%= task.taskNumber %></p>
                     <p><strong>Qaysi tashkilotdan:</strong> <%= task.organization %></p>
                     <p><strong>Sanasi:</strong> <%= formattedDate %></p>
-                     <% if(user?.role === 'admin' || user?.role === 'superAdmin' || user?.role === 'ijro') { %>
+                    <% if(user?.role === 'admin' || user?.role === 'superAdmin' || user?.role === 'ijro') { %>
                     <div class="d-flex justify-content-around expiredInfo">
                       <a
                         href="/admin/updateExpiredTask/<%= task.id%>-<%=employee.id%>"
