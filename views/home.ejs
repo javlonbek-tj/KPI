@@ -73,7 +73,7 @@
                     <% } %>
                     <% overallExpiredTasks += employee.tasksInProcess.length; %>
                   <% if (isAdminOrIjro) { %>
-                    <a href="/expiredTasks?from=<%= employee.from %>&to=<%= employee.to %>">
+                    <a href="/expiredTasks?from=<%= employee.from %>&to=<%= employee.to %>&departmentId=<%= departmentId%>&fullname=<%= fullname%>">
                   <% } %>
                   <% } %>
                   <div class="p-3 h-100 bg-white shadow-sm d-flex justify-content-around align-items-center rounded">
@@ -95,7 +95,7 @@
                     <% for (let employee of allEmployees) { %>
                       <% overallLatenesses += employee.latenesses.length; %>
                     <% if (isAdminOrKadr) { %>
-                      <a href="/latenesses?from<%= employee.from%>&to=<%= employee.to %>">
+                      <a href="/latenesses?from<%= employee.from%>&to=<%= employee.to %>&departmentId=<%= departmentId%>&fullname=<%= fullname%>">
                     <% } %>
                     <% } %> 
                     <div class="p-3 h-100 bg-white shadow-sm d-flex justify-content-around align-items-center rounded">

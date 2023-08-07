@@ -1,7 +1,6 @@
 import adminService from '../services/admin.service.js';
 import { filteredUsers, tasks, filteredDepartments, filteredLatenesses } from './home.controller.js';
 
-
 class AdminController {
   async getRegister(req, res, next) {
     try {
@@ -179,15 +178,8 @@ class AdminController {
 
   async postUpdateLateness(req, res, next) {
     try {
-      const { employeeId, latenessId, lateDay, lateTime} = req.body;
-      await adminService.updateLateness(
-        employeeId,
-        latenessId,
-        req,
-        res,
-        lateDay,
-        lateTime,
-      );
+      const { employeeId, latenessId, lateDay, lateTime } = req.body;
+      await adminService.updateLateness(employeeId, latenessId, req, res, lateDay, lateTime);
     } catch (e) {
       next(e);
     }
@@ -204,7 +196,7 @@ class AdminController {
         taskNumber,
         organization,
         date,
-        status
+        status,
       );
     } catch (e) {
       next(e);
@@ -212,17 +204,8 @@ class AdminController {
   }
   async updateEmployee(req, res, next) {
     try {
-      const {
-        firstname,
-        secondname,
-        lastname,
-        login,
-        password,
-        positionId,
-        departmentId,
-        role,
-        employeeId,
-      } = req.body;
+      const { firstname, secondname, lastname, login, password, positionId, departmentId, role, employeeId } =
+        req.body;
       await adminService.adminUpdateEmployee(
         req,
         res,

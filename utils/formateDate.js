@@ -21,5 +21,18 @@ export const getMonth = queryDate => {
 };
 
 export function formatDate(date) {
-  return format(new Date(date), 'MM.dd.yyyy');
+  return format(new Date(date), 'dd.MM.yyyy');
+}
+
+export function parseDateWithTimezone(dateString) {
+  const date = new Date(dateString);
+  // Extract the timezone offset from the dateString (e.g., "+0500")
+  const timezoneOffset = dateString.slice(-5);
+  // Get the hours and minutes from the timezone offset string
+  const hours = parseInt(timezoneOffset.slice(0, 3), 10);
+  const minutes = parseInt(timezoneOffset.slice(3), 10);
+  // Apply the timezone offset to the date
+  date.setUTCHours(date.getUTCHours() - hours);
+  date.setUTCMinutes(date.getUTCMinutes() - minutes);
+  return date;
 }
