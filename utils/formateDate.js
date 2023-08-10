@@ -24,6 +24,10 @@ export function formatDate(date) {
   return format(new Date(date), 'dd.MM.yyyy');
 }
 
+export function newFormatDate(date) {
+  return format(new Date(date), 'yyyy-dd-MM');
+}
+
 export function parseDateWithTimezone(dateString) {
   const date = new Date(dateString);
   // Extract the timezone offset from the dateString (e.g., "+0500")

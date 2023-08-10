@@ -1,9 +1,9 @@
 import { validationResult } from 'express-validator';
 import bcrypt from 'bcryptjs';
 import excelJS from 'exceljs';
-import { getMonth } from '../utils/formateDate.js';
+import { getMonth, newFormatDate } from '../utils/formateDate.js';
 import { formatDate } from '../utils/formateDate.js';
-import {deleteFile, deleteImages, getImageUrl} from '../utils/file.js';
+import { deleteFile, deleteImages, getImageUrl } from '../utils/file.js';
 
 const renderAddEmployee = async (
   req,
@@ -113,7 +113,7 @@ const renderExpiredTask = async (
   organization = '',
   expiredTaskId = '',
   formatDate = '',
-  status = 'Jarayonda'
+  status = 'Jarayonda',
 ) => {
   const employee = await req.db.users.findOne({ where: { id } });
   return res.render('admin/addletterControl', {
@@ -127,7 +127,7 @@ const renderExpiredTask = async (
     organization,
     expiredTaskId,
     formatDate,
-    status
+    status,
   });
 };
 
@@ -151,7 +151,7 @@ class AdminService {
     const errors = validationResult(req);
     const images = req.files;
     if (!errors.isEmpty()) {
-      if(images?.userPhoto || images?.resume) {
+      if (images?.userPhoto || images?.resume) {
         deleteImages(images);
       }
       const errorMessage = errors.array()[0].msg;
@@ -173,7 +173,7 @@ class AdminService {
     }
     const user = await req.db.users.findOne({ where: { login } });
     if (user) {
-        if(images?.userPhoto || images?.resume) {
+      if (images?.userPhoto || images?.resume) {
         deleteImages(images);
       }
       return renderAddEmployee(
@@ -194,7 +194,7 @@ class AdminService {
     }
     const candidate = await req.db.users.findOne({ where: { firstname, secondname, lastname } });
     if (candidate) {
-        if(images?.userPhoto || images?.resume) {
+      if (images?.userPhoto || images?.resume) {
         deleteImages(images);
       }
       return renderAddEmployee(
@@ -214,10 +214,10 @@ class AdminService {
     }
     let photo;
     let resume;
-    if(images?.userPhoto && images.userPhoto[0].path) {
+    if (images?.userPhoto && images.userPhoto[0].path) {
       photo = images.userPhoto[0].path;
     }
-    if(images?.resume && images.resume[0].path) {
+    if (images?.resume && images.resume[0].path) {
       resume = images.resume[0].path;
     }
     const hashPassword = await bcrypt.hash(password, 10);
@@ -234,7 +234,7 @@ class AdminService {
       positionId,
       departmentId,
       role,
-      resume
+      resume,
     });
     const highestExistingDateId = await req.db.date.max('id');
     const newDateId = highestExistingDateId ? highestExistingDateId + 1 : 1;
@@ -307,18 +307,20 @@ class AdminService {
       where: { id },
       include: [req.db.department, req.db.expiredTasks, req.db.lateness, req.db.position, req.db.date],
     });
-   function getExpiredTasks(employee, month) {
-  const filteredExpiredTasks = employee.expiredTasks?.filter(task => new Date(task.date).getMonth() === month);
+    function getExpiredTasks(employee, month) {
+      const filteredExpiredTasks = employee.expiredTasks?.filter(
+        task => new Date(task.date).getMonth() === month,
+      );
 
-  if (!filteredExpiredTasks) {
-    return [];
-  }
+      if (!filteredExpiredTasks) {
+        return [];
+      }
 
-  const tasksInProcess = filteredExpiredTasks.filter(task => task.status === 'Jarayonda');
-  const tasksFinished = filteredExpiredTasks.filter(task => task.status === 'Yakunlangan');
+      const tasksInProcess = filteredExpiredTasks.filter(task => task.status === 'Jarayonda');
+      const tasksFinished = filteredExpiredTasks.filter(task => task.status === 'Yakunlangan');
 
-  return { tasksInProcess, tasksFinished };
-}
+      return { tasksInProcess, tasksFinished };
+    }
     function getLateness(employee, month) {
       return employee.latenesses?.filter(late => new Date(late.lateDay).getMonth() === month);
     }
@@ -339,7 +341,7 @@ class AdminService {
   async addLateness(userId, req, res, lateDay, lateTime, explanationLetter) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      if(req.file?.path) {
+      if (req.file?.path) {
         deleteFile(req.file.path);
       }
       const errorMessage = errors.array()[0].msg;
@@ -454,8 +456,8 @@ class AdminService {
 
     const userId = latenessInfo.userId;
     await req.db.lateness.destroy({ where: { id } });
-    if(latenessInfo.explanationLetter) {
-         deleteFile(latenessInfo.explanationLetter);
+    if (latenessInfo.explanationLetter) {
+      deleteFile(latenessInfo.explanationLetter);
     }
     res.redirect(`/admin/users/${userId}`);
   }
@@ -467,18 +469,7 @@ class AdminService {
     }
     const { lateDay, lateTime, id } = latenessInfo;
     const errorMessage = '';
-    renderLateness(
-      employeeId,
-      req,
-      res,
-      errorMessage,
-      false,
-      true,
-      lateDay,
-      lateTime,
-      id,
-      formatDate,
-    );
+    renderLateness(employeeId, req, res, errorMessage, false, true, lateDay, lateTime, id, formatDate);
   }
 
   async updateExpiredTaskPage(employeeId, letterId, req, res) {
@@ -497,15 +488,14 @@ class AdminService {
       organization,
       id,
       formatDate,
-      status
+      status,
     );
   }
 
   async updateEmployeePage(employeeId, req, res) {
     const employee = await req.db.users.findByPk(employeeId);
     const errorMessage = '';
-    const { firstname, secondname, lastname, login, password, departmentId, positionId, role, id } =
-      employee;
+    const { firstname, secondname, lastname, login, password, departmentId, positionId, role, id } = employee;
     renderAddEmployee(
       req,
       res,
@@ -527,7 +517,7 @@ class AdminService {
   async updateLateness(userId, latenessId, req, res, lateDay, lateTime) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      if(req.file?.path) {
+      if (req.file?.path) {
         deleteFile(req.file.path);
       }
       const errorMessage = errors.array()[0].msg;
@@ -548,7 +538,7 @@ class AdminService {
     if (req.file?.path) {
       oldLateness.explanationLetter = req.file.path;
     }
-    oldLateness.lateDay = lateDay;
+    oldLateness.lateDay = newFormatDate(lateDay);
     oldLateness.lateTime = lateTime;
     await oldLateness.save();
     res.redirect(`/admin/users/${userId}`);
@@ -558,16 +548,29 @@ class AdminService {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       const errorMessage = errors.array()[0].msg;
-      return renderExpiredTask(userId, req, res, errorMessage, true, true, date, taskNumber, organization, expiredTaskId, formatDate, status);
+      return renderExpiredTask(
+        userId,
+        req,
+        res,
+        errorMessage,
+        true,
+        true,
+        date,
+        taskNumber,
+        organization,
+        expiredTaskId,
+        formatDate,
+        status,
+      );
     }
     const oldExpiredTask = await req.db.expiredTasks.findByPk(expiredTaskId);
-   if (oldExpiredTask) {
-    oldExpiredTask.taskNumber = taskNumber;
-    oldExpiredTask.organization = organization;
-    oldExpiredTask.date = date;
-    oldExpiredTask.status = status;
-    await oldExpiredTask.save();
-  }
+    if (oldExpiredTask) {
+      oldExpiredTask.taskNumber = taskNumber;
+      oldExpiredTask.organization = organization;
+      oldExpiredTask.date = date;
+      oldExpiredTask.status = status;
+      await oldExpiredTask.save();
+    }
     res.redirect(`/admin/users/${userId}`);
   }
 
@@ -587,7 +590,7 @@ class AdminService {
     const errors = validationResult(req);
     const images = req.files;
     if (!errors.isEmpty()) {
-      if(images?.userPhoto || images?.resume) {
+      if (images?.userPhoto || images?.resume) {
         deleteImages(images);
       }
       const errorMessage = errors.array()[0].msg;
@@ -610,7 +613,7 @@ class AdminService {
     }
     const user = await req.db.users.findOne({ where: { login } });
     if (user && user.login !== login) {
-      if(images?.userPhoto || images?.resume) {
+      if (images?.userPhoto || images?.resume) {
         deleteImages(images);
       }
       return renderAddEmployee(
@@ -633,7 +636,7 @@ class AdminService {
     const candidate = await req.db.users.findOne({ where: { firstname, secondname, lastname } });
     const fullname = `${firstname} ${secondname} ${lastname}`;
     if (candidate && candidate.fullname !== fullname) {
-      if(images?.userPhoto || images?.resume) {
+      if (images?.userPhoto || images?.resume) {
         deleteImages(images);
       }
       return renderAddEmployee(
@@ -655,13 +658,13 @@ class AdminService {
     }
     const oldEmployee = await req.db.users.findByPk(userId);
     if (images?.userPhoto && images.userPhoto[0].path) {
-      if(oldEmployee.photo) {
+      if (oldEmployee.photo) {
         deleteFile(oldEmployee.photo);
       }
       oldEmployee.photo = images.userPhoto[0].path;
     }
-     if (images?.resume && images.resume[0].path) {
-      if(oldEmployee.resume) {
+    if (images?.resume && images.resume[0].path) {
+      if (oldEmployee.resume) {
         deleteFile(oldEmployee.resume);
       }
       oldEmployee.resume = images.resume[0].path;
@@ -687,9 +690,9 @@ class AdminService {
       { header: 'Xodim', key: 'fullname', width: 10 },
       { header: 'Lavozimi', key: 'position', width: 10 },
       { header: 'Oy', key: 'dates', width: 10 },
-      { header: 'Muddati o\'tgan xatlar', key: 'tasksInProcess', width: 10 },
-      { header: 'Muddat o\'tib bajarilgan', key: 'tasksFinished', width: 10 },
-      { header: "Kechikishlar soni", key: 'latenesses', width: 10 },
+      { header: "Muddati o'tgan xatlar", key: 'tasksInProcess', width: 10 },
+      { header: "Muddat o'tib bajarilgan", key: 'tasksFinished', width: 10 },
+      { header: 'Kechikishlar soni', key: 'latenesses', width: 10 },
     ];
 
     let counter = 1;
@@ -721,14 +724,14 @@ class AdminService {
 
   async getExcelByDepartments(filteredDepartments) {
     const workbook = new excelJS.Workbook();
-    const worksheet = workbook.addWorksheet('Bo\'limlar');
+    const worksheet = workbook.addWorksheet("Bo'limlar");
     worksheet.columns = [
       { header: '№', key: 'id', width: 10 },
       { header: "Bo'lim", key: 'department', width: 10 },
       { header: 'Oy', key: 'dates', width: 10 },
-      { header: 'Muddati o\'tgan xatlar', key: 'tasksInProcess', width: 10 },
-      { header: 'Muddat o\'tib bajarilgan', key: 'tasksFinished', width: 10 },
-      { header: "Kechikishlar soni", key: 'latenesses', width: 10 },
+      { header: "Muddati o'tgan xatlar", key: 'tasksInProcess', width: 10 },
+      { header: "Muddat o'tib bajarilgan", key: 'tasksFinished', width: 10 },
+      { header: 'Kechikishlar soni', key: 'latenesses', width: 10 },
     ];
 
     let counter = 1;
