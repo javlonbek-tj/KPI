@@ -10,7 +10,7 @@ import LatenessModel from '../models/lateness.model.js';
 
 dotenv.config();
 
-const isProduction = process.env.NODE_ENV === 'production';
+/* const isProduction = process.env.NODE_ENV === 'production';
 
 const sequelize = new Sequelize(
   isProduction ? process.env.DB_NAME : process.env.DB_NAME_DEV,
@@ -21,13 +21,13 @@ const sequelize = new Sequelize(
     host: isProduction ? process.env.DB_HOST : process.env.DB_HOST_DEV,
     logging: false,
   },
-);
+); */
 
-/* const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, process.env.DB_PASSWORD, {
+const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, process.env.DB_PASSWORD, {
   dialect: 'postgres',
   host: process.env.DB_HOST,
   logging: false,
-}); */
+});
 
 export default async function pg() {
   try {
