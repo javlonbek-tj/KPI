@@ -11,10 +11,10 @@
       />
     </div>
     <div class="col-md-1">
-    <div class="filtering">
-      <a href="/admin/latenessExcel">Excel</a>
+      <div class="filtering">
+        <a href="/admin/latenessExcel">Excel</a>
+      </div>
     </div>
-  </div>
   </div>
   <div class="row">
     <div class="col">
@@ -31,9 +31,7 @@
             </tr>
           </thead>
           <tbody>
-            <% latenesses.forEach((late, index) => {  
-              const formatedDate = formatDate(late.lateDay);
-            %>
+            <% latenesses.forEach((late, index) => { const formatedDate = newFormatDate(late.lateDay); %>
             <tr>
               <td class="align-middle text-center"><%= (index + 1) %></td>
               <td class="align-middle text-center"><%= late.user.department.name %></td>
@@ -41,12 +39,12 @@
               <td class="align-middle text-center"><%= formatedDate %></td>
               <td class="align-middle text-center"><%= late.lateTime %> minut</td>
               <td class="align-middle text-center">
-              <% if (late.explanationLetter) { %>
+                <% if (late.explanationLetter) { %>
                 <a href="/<%= late.explanationLetter %>">Ko'rish</a>
-              <% } else { %>
+                <% } else { %>
                 <p>Taqdim etilmadi</p>
-              <% } %>
-            </td>
+                <% } %>
+              </td>
             </tr>
             <% }); %>
           </tbody>
@@ -72,4 +70,3 @@
     });
   });
 </script>
-
