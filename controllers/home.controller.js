@@ -1,7 +1,7 @@
 import { Op } from 'sequelize';
 import filtering from '../utils/filtering.js';
 import { getMonth } from '../utils/formateDate.js';
-import { formatDate, parseDateWithTimezone } from '../utils/formateDate.js';
+import { newFormatDate, parseDateWithTimezone } from '../utils/formateDate.js';
 
 export let filteredUsers = [];
 export let tasks = [];
@@ -227,7 +227,7 @@ class HomeController {
       return res.render('latenesses', {
         pageTitle: `Kechikishlar`,
         latenesses: latenessByDepartment,
-        formatDate,
+        newFormatDate,
       });
     } catch (e) {
       next(e);
@@ -270,7 +270,7 @@ class HomeController {
       return res.render('expiredTasks', {
         pageTitle: `Muddat buzilishlar`,
         expiredTasks: expiredTaskByDepartment,
-        formatDate,
+        newFormatDate,
       });
     } catch (e) {
       next(e);

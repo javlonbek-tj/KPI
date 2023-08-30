@@ -2,7 +2,6 @@ import { validationResult } from 'express-validator';
 import bcrypt from 'bcryptjs';
 import excelJS from 'exceljs';
 import { getMonth, newFormatDate } from '../utils/formateDate.js';
-import { formatDate } from '../utils/formateDate.js';
 import { deleteFile, deleteImages, getImageUrl } from '../utils/file.js';
 
 const renderAddEmployee = async (
@@ -85,7 +84,7 @@ const renderLateness = async (
   lateDay = '',
   lateTime = '',
   latenessId = '',
-  formatDate = '',
+  newFormatDate = '',
 ) => {
   const employee = await req.db.users.findOne({ where: { id } });
   return res.render('admin/addLateInfo', {
@@ -97,7 +96,7 @@ const renderLateness = async (
     lateDay,
     lateTime,
     latenessId,
-    formatDate,
+    newFormatDate,
   });
 };
 
@@ -112,7 +111,7 @@ const renderExpiredTask = async (
   taskNumber = '',
   organization = '',
   expiredTaskId = '',
-  formatDate = '',
+  newFormatDate = '',
   status = 'Jarayonda',
 ) => {
   const employee = await req.db.users.findOne({ where: { id } });
@@ -126,7 +125,7 @@ const renderExpiredTask = async (
     taskNumber,
     organization,
     expiredTaskId,
-    formatDate,
+    newFormatDate,
     status,
   });
 };
@@ -329,7 +328,7 @@ class AdminService {
       employee,
       getExpiredTasks,
       getLateness,
-      formatDate,
+      newFormatDate,
       getMonth,
     });
   }
@@ -355,9 +354,8 @@ class AdminService {
         false,
         lateDay,
         lateTime,
-        explanationLetter,
         latenessId,
-        formatDate,
+        newFormatDate,
       );
     }
     const highestExistingLatenessId = await req.db.lateness.max('id');
@@ -386,7 +384,7 @@ class AdminService {
         taskNumber,
         organization,
         expiredTaskId,
-        formatDate,
+        newFormatDate,
       );
     }
     const highestExistingExpiredTaskId = await req.db.expiredTasks.max('id');
@@ -469,7 +467,7 @@ class AdminService {
     }
     const { lateDay, lateTime, id } = latenessInfo;
     const errorMessage = '';
-    renderLateness(employeeId, req, res, errorMessage, false, true, lateDay, lateTime, id, formatDate);
+    renderLateness(employeeId, req, res, errorMessage, false, true, lateDay, lateTime, id, newFormatDate);
   }
 
   async updateExpiredTaskPage(employeeId, letterId, req, res) {
@@ -487,7 +485,7 @@ class AdminService {
       taskNumber,
       organization,
       id,
-      formatDate,
+      newFormatDate,
       status,
     );
   }
@@ -531,7 +529,7 @@ class AdminService {
         lateDay,
         lateTime,
         latenessId,
-        formatDate,
+        newFormatDate,
       );
     }
     const oldLateness = await req.db.lateness.findByPk(latenessId);
@@ -559,7 +557,7 @@ class AdminService {
         taskNumber,
         organization,
         expiredTaskId,
-        formatDate,
+        newFormatDate,
         status,
       );
     }

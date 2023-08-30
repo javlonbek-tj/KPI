@@ -20,12 +20,8 @@ export const getMonth = queryDate => {
   return ` ${getYear} yil ${getMonth}`;
 };
 
-export function formatDate(date) {
-  return format(new Date(date), 'dd.MM.yyyy');
-}
-
 export function newFormatDate(date) {
-  return format(new Date(date), 'yyyy-dd-MM');
+  return format(new Date(date), 'yyyy-MM-dd');
 }
 
 export function parseDateWithTimezone(dateString) {

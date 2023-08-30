@@ -85,7 +85,8 @@
                     ></button>
                   </div>
                   <div class="modal-body">
-                    <% lateness.forEach((late, index) => { const formatedDate = formatDate(late.lateDay); %>
+                    <% lateness.forEach((late, index) => { const formatedDate = newFormatDate(late.lateDay);
+                    %>
                     <p><strong>Sana:</strong> <%= formatedDate %></p>
                     <p><strong>Kechikish vaqti:</strong> <%= late.lateTime %> minut</p>
                     <p>
@@ -136,8 +137,8 @@
                     ></button>
                   </div>
                   <div class="modal-body">
-                    <% tasksInProcess.forEach((task, index) => { const formattedDate = formatDate(task.date);
-                    %>
+                    <% tasksInProcess.forEach((task, index) => { const formattedDate =
+                    newFormatDate(task.date); %>
                     <p><strong>Hujjat raqami:</strong> <%= task.taskNumber %></p>
                     <p><strong>Qaysi tashkilotdan:</strong> <%= task.organization %></p>
                     <p><strong>Sanasi:</strong> <%= formattedDate %></p>
@@ -183,8 +184,8 @@
                     ></button>
                   </div>
                   <div class="modal-body">
-                    <% tasksFinished.forEach((task, index) => { const formattedDate = formatDate(task.date);
-                    %>
+                    <% tasksFinished.forEach((task, index) => { const formattedDate =
+                    newFormatDate(task.date); %>
                     <p><strong>Hujjat raqami:</strong> <%= task.taskNumber %></p>
                     <p><strong>Qaysi tashkilotdan:</strong> <%= task.organization %></p>
                     <p><strong>Sanasi:</strong> <%= formattedDate %></p>
