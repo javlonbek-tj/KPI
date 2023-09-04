@@ -828,6 +828,16 @@ class AdminService {
 
     return workbook;
   }
+
+  async deleteUser(userId, req, res) {
+    const user = await req.db.users.findByPk(userId);
+
+    if (!user) {
+      throw new Error('Xodim topilmadi');
+    }
+    await req.db.users.destroy({ where: { id: userId } });
+    res.redirect('/');
+  }
 }
 
 export default new AdminService();

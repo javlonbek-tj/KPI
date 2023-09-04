@@ -278,6 +278,14 @@ class AdminController {
       next(e);
     }
   }
+  async removeUser(req, res, next) {
+    try {
+      const { userId } = req.params;
+      await adminService.deleteUser(userId, req, res);
+    } catch (e) {
+      next(e);
+    }
+  }
 }
 
 export default new AdminController();

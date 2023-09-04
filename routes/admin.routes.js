@@ -10,7 +10,7 @@ adminRoutes.get('/addEmployee', isAuth, adminController.getRegister);
 adminRoutes.post(
   '/addEmployee',
   isAuth,
-  upload.fields([{name: 'userPhoto'}, {name: 'resume'}]),
+  upload.fields([{ name: 'userPhoto' }, { name: 'resume' }]),
   [
     check('departmentId', `Bo'lim nomi kiritilmadi`).not().isEmpty().isString(),
     check('firstname', `Ism kiritilmadi`).not().isEmpty().isString(),
@@ -112,7 +112,7 @@ adminRoutes.get('/updateEmployee/:employeeId', isAuth, adminController.getUpdate
 adminRoutes.post(
   '/updateEmployee',
   isAuth,
-  upload.fields([{name: 'userPhoto'}, {name: 'resume'}]),
+  upload.fields([{ name: 'userPhoto' }, { name: 'resume' }]),
   [
     check('departmentId', `Bo'lim nomi kiritilmadi`).not().isEmpty().isString(),
     check('firstname', `Ism kiritilmadi`).not().isEmpty().isString(),
@@ -127,5 +127,6 @@ adminRoutes.get('/excel', isAuth, adminController.downloadExcel);
 adminRoutes.get('/excelByDepartments', isAuth, adminController.downloadByDepartments);
 adminRoutes.get('/expiredTasksExcel', isAuth, adminController.downloadTasksExcel);
 adminRoutes.get('/latenessExcel', isAuth, adminController.downloadLatenessExcel);
+adminRoutes.get('/delete-user/:userId', isAuth, adminController.removeUser);
 
 export default adminRoutes;

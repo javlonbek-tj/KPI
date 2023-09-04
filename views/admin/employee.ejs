@@ -18,6 +18,7 @@
           <% if(user?.role === 'admin' || user?.role === 'superAdmin' || user?.role === 'kadr') { %> <%
           if(employee?.role !== 'superAdmin' || user?.role === 'superAdmin') { %>
           <a href="/admin/updateEmployee/<%= employee.id%>" class="btn btn-primary me-3">Yangilash</a>
+          <a href="/admin/delete-user/<%= employee.id%>" class="btn btn-danger">O'chirish</a>
           <% if (employee.resume) { %>
           <a href="/<%= employee.resume %>" class="btn btn-success">Rezyume</a>
           <% } %> <% } %> <% } %>
