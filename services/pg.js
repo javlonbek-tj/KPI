@@ -45,6 +45,8 @@ export default async function pg() {
     db.date = await DateModel(sequelize, Sequelize);
 
     await Relations(db);
+    // DON'T CHANGE IT TO TRUE
+    await sequelize.sync({ force: false });
     return db;
   } catch (err) {
     console.log(err);
