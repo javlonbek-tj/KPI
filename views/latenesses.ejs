@@ -34,8 +34,10 @@
             <% latenesses.forEach((late, index) => { const formatedDate = newFormatDate(late.lateDay); %>
             <tr>
               <td class="align-middle text-center"><%= (index + 1) %></td>
-              <td class="align-middle text-center"><%= late.user.department.name %></td>
-              <td class="align-middle text-center"><%= late.user.firstname %> <%= late.user.secondname %></td>
+              <td class="align-middle text-center"><%= late.user?.department.name %></td>
+              <td class="align-middle text-center">
+                <%= late.user?.firstname %> <%= late.user?.secondname %>
+              </td>
               <td class="align-middle text-center"><%= formatedDate %></td>
               <td class="align-middle text-center"><%= late.lateTime %> minut</td>
               <td class="align-middle text-center">
